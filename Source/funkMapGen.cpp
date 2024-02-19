@@ -1,5 +1,4 @@
-#include "all.h"
-#include "level.h"
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 
@@ -97,6 +96,32 @@ void seedSelection(int seed)
 	}
 }
 
+int getStairTeleportDistance()
+{
+	int upX = -1;
+	int upY = -1;
+	int downX = -1;
+	int downY = -1;
+
+	for (int i = 0; i < numtrigs; i++) {
+		if (trigs[i]._tmsg == WM_DIABNEXTLVL) {
+			downX = trigs[i]._tx;
+			downY = trigs[i]._ty;
+		} else if (trigs[i]._tmsg == WM_DIABPREVLVL) {
+			upX = trigs[i]._tx;
+			upY = trigs[i]._ty;
+		}
+	}
+
+	if (upX != -1 && upY != -1 && downX != -1 && downY != -1) {
+		int H = std::max(upX, downX) - std::min(upX, downX);
+		int V = std::max(upY, downY) - std::min(upY, downY);
+		return std::max(H, V);
+	}
+
+	return -1;
+}
+
 void printAsciiLevel()
 {
 	for (int boby = 16; boby < MAXDUNY - 17; boby++) {
@@ -107,6 +132,11 @@ void printAsciiLevel()
 				std::cout << " ";
 		}
 		std::cout << std::endl;
+	}
+
+	int distance = getStairTeleportDistance();
+	if (distance != -1) {
+		std::cout << "Stair teleport distance: " << distance << std::endl;
 	}
 	std::cout << std::endl;
 }

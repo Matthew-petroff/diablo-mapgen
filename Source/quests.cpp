@@ -179,7 +179,6 @@ BOOL QuestStatus(int i)
 	return TRUE;
 }
 
-
 void DrawButcher()
 {
 	int x, y;

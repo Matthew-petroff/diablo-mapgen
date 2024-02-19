@@ -237,12 +237,7 @@ void InitL4Triggers()
 				trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
 				numtrigs++;
 			}
-		}
-	}
-
-	for (j = 0; j < MAXDUNY; j++) {
-		for (i = 0; i < MAXDUNX; i++) {
-			if (dPiece[i][j] == 370 && quests[Q_BETRAYER]._qactive == QUEST_DONE) {
+			if (dPiece[i][j] == 336 || dPiece[i][j] == 370) {
 				trigs[numtrigs]._tx = i;
 				trigs[numtrigs]._ty = j;
 				trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;

@@ -17,14 +17,14 @@ extern int questdebug;
 
 BOOL delta_quest_inited(int i);
 int random_(BYTE idx, int v);
-[[noreturn]] void app_fatal(const char* dummystring);
+[[noreturn]] void app_fatal(const char *dummystring);
 void SetAutomapView(int nXPos, int nYPos);
 void SetRndSeed(int s);
 int GetRndSeed();
 
-BYTE* DiabloAllocPtr(DWORD dwBytes);
-void mem_free_dbg(void* p);
-BYTE* LoadFileInMem(std::string pszName, DWORD* pdwFileLen);
+BYTE *DiabloAllocPtr(DWORD dwBytes);
+void mem_free_dbg(void *p);
+BYTE *LoadFileInMem(std::string pszName, DWORD *pdwFileLen);
 void LoadLvlGFX();
 
 void SetMapObjects(BYTE *pMap, int startx, int starty);
