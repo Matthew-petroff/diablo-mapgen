@@ -432,6 +432,8 @@ void printHelp()
 	std::cout << "--verbose      Print out details about rejected seeds" << std::endl;
 }
 
+extern int sglGameSeed;
+
 int main(int argc, char **argv)
 {
 	uint32_t startSeed = 0;
@@ -487,9 +489,6 @@ int main(int argc, char **argv)
 
 		{
 			currlevel = 9;
-			whatleveltype();
-			createSpecificDungeon();
-			InitStairCordinates();
 
 			InitLevelMonsters();
 			SetRndSeed(glSeedTbl[currlevel]);
@@ -499,6 +498,16 @@ int main(int argc, char **argv)
 				lavaLordFound |= Monsters[i].mtype == MT_WMAGMA;
 			if (!lavaLordFound)
 				continue;
+			int themeSeed = sglGameSeed;
+
+			whatleveltype();
+			createSpecificDungeon();
+			InitStairCordinates();
+
+			if (CalcStairsChebyshevDistance() > 10)
+				continue;
+
+			SetRndSeed(themeSeed);
 			InitThemes();
 
 			SetRndSeed(glSeedTbl[currlevel]);
