@@ -461,14 +461,14 @@ int main(int argc, char **argv)
 		}
 	}
 
-	ULONGLONG ticks = GetTickCount64();
+	int seconds = time(NULL);
 	for (uint32_t seed = startSeed; seed < startSeed + seedCount; seed++) {
 		if (!quiet)
 			std::cout << "processing seed " << seed << std::endl;
-		ULONGLONG elapsed = GetTickCount64() - ticks;
-		if (elapsed >= 1000) {
+		int elapsed = time(NULL) - seconds;
+		if (elapsed >= 1) {
 			std::cerr << "processing seed " << seed << std::endl;
-			ticks += elapsed;
+			seconds += elapsed;
 		}
 
 		lengthPathToDlvl9 = 0;
