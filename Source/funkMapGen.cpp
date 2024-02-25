@@ -461,23 +461,29 @@ int main(int argc, char **argv)
 		}
 	}
 
+	ULONGLONG ticks = GetTickCount64();
 	for (uint32_t seed = startSeed; seed < startSeed + seedCount; seed++) {
 		if (!quiet)
 			std::cout << "processing seed " << seed << std::endl;
+		ULONGLONG elapsed = GetTickCount64() - ticks;
+		if (elapsed >= 1000) {
+			std::cerr << "processing seed " << seed << std::endl;
+			ticks += elapsed;
+		}
 
 		lengthPathToDlvl9 = 0;
 		seedSelection(seed);
 		InitQuests();
-		if (quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
-			if (verbose)
-				std::cout << "Game Seed: " << sgGameInitInfo.dwSeed << " thrown out: Sign Quest" << std::endl;
-			continue;
-		}
-		if (quests[Q_WARLORD]._qactive != QUEST_NOTAVAIL) {
-			if (verbose)
-				std::cout << "Game Seed: " << sgGameInitInfo.dwSeed << " thrown out: Warlord" << std::endl;
-			continue;
-		}
+		//if (quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
+		//	if (verbose)
+		//		std::cout << "Game Seed: " << sgGameInitInfo.dwSeed << " thrown out: Sign Quest" << std::endl;
+		//	continue;
+		//}
+		//if (quests[Q_WARLORD]._qactive != QUEST_NOTAVAIL) {
+		//	if (verbose)
+		//		std::cout << "Game Seed: " << sgGameInitInfo.dwSeed << " thrown out: Warlord" << std::endl;
+		//	continue;
+		//}
 
 		{
 			currlevel = 9;
@@ -488,62 +494,76 @@ int main(int argc, char **argv)
 			InitLevelMonsters();
 			SetRndSeed(glSeedTbl[currlevel]);
 			GetLevelMTypes();
+			bool lavaLordFound = false;
+			for (int i = 0; i < nummtypes; i++)
+				lavaLordFound |= Monsters[i].mtype == MT_WMAGMA;
+			if (!lavaLordFound)
+				continue;
 			InitThemes();
 
 			SetRndSeed(glSeedTbl[currlevel]);
 			HoldThemeRooms();
 			GetRndSeed();
 			InitMonsters();
-			GetRndSeed();
-			InitObjects();
-			InitItems();
-			CreateThemeRooms();
+			//GetRndSeed();
+			//InitObjects();
+			//InitItems();
+			//CreateThemeRooms();
 
 			int monsterItems = numitems;
 			for (int i = 0; i < nummonsters; i++) {
 				int mid = monstactive[i];
+				if (monster[mid].MType->mtype != MT_WMAGMA)
+					continue;
 				SetRndSeed(monster[mid]._mRndSeed);
 				SpawnItem(mid, monster[mid]._mx, monster[mid]._my, TRUE);
 			}
 
-			int objectItems = numitems;
-			for (int i = 0; i < nobjects; i++) {
-				int oid = objectactive[i];
-				createItemsFromObject(oid);
-			}
+			//int objectItems = numitems;
+			//for (int i = 0; i < nobjects; i++) {
+			//	int oid = objectactive[i];
+			//	createItemsFromObject(oid);
+			//}
 
 			bool foundPuzzler = false;
 			for (int i = 0; i < numitems; i++) {
 				int ii = itemactive[i];
-				foundPuzzler |= item[ii]._iMagical == ITEM_QUALITY_UNIQUE && item[ii]._iUid == 60;
+				if (item[ii]._iMagical == ITEM_QUALITY_UNIQUE && item[ii]._iUid == 60) {
+					int horizontal = std::max(Spawn.x, item[ii]._ix) - std::min(Spawn.x, item[ii]._ix);
+					int vertical = std::max(Spawn.y, item[ii]._iy) - std::min(Spawn.y, item[ii]._iy);
+					int distance = std::max(horizontal, vertical);
+					if (distance < 20)
+						foundPuzzler = true;
+				}
 			}
-			if (!foundPuzzler)
-				continue;
+			if (foundPuzzler)
+				std::cout << "Game seed: " << seed << std::endl;
+			continue;
 
-			if (!quiet) {
-				std::cout << "Monster Count: " << nummonsters << std::endl;
-				for (int i = 0; i < nummonsters; i++) {
-					std::cout << "Monster " << i << ": " << monster[monstactive[i]].mName << " (" << monster[monstactive[i]]._mRndSeed << ")" << std::endl;
-				}
-				std::cout << std::endl;
-				std::cout << "Object Count: " << nobjects << std::endl;
-				for (int i = 0; i < nobjects; i++) {
-					int oid = objectactive[i];
-					char objstr[50];
-					GetObjectStr(oid, objstr);
-					std::cout << "Object " << i << ": " << objstr << " (" << object[oid]._oRndSeed << ")" << std::endl;
-				}
-				std::cout << std::endl;
-				std::cout << "Item Count: " << numitems << std::endl;
-				for (int i = 0; i < numitems; i++) {
-					std::string prefix = "";
-					if (i >= objectItems)
-						prefix = "Object ";
-					else if (i >= monsterItems)
-						prefix = "Monster ";
-					std::cout << prefix << "Item " << i << ": " << item[itemactive[i]]._iIName << " (" << item[itemactive[i]]._iSeed << ")" << std::endl;
-				}
-			}
+			//if (!quiet) {
+			//	std::cout << "Monster Count: " << nummonsters << std::endl;
+			//	for (int i = 0; i < nummonsters; i++) {
+			//		std::cout << "Monster " << i << ": " << monster[monstactive[i]].mName << " (" << monster[monstactive[i]]._mRndSeed << ")" << std::endl;
+			//	}
+			//	std::cout << std::endl;
+			//	std::cout << "Object Count: " << nobjects << std::endl;
+			//	for (int i = 0; i < nobjects; i++) {
+			//		int oid = objectactive[i];
+			//		char objstr[50];
+			//		GetObjectStr(oid, objstr);
+			//		std::cout << "Object " << i << ": " << objstr << " (" << object[oid]._oRndSeed << ")" << std::endl;
+			//	}
+			//	std::cout << std::endl;
+			//	std::cout << "Item Count: " << numitems << std::endl;
+			//	for (int i = 0; i < numitems; i++) {
+			//		std::string prefix = "";
+			//		if (i >= objectItems)
+			//			prefix = "Object ";
+			//		else if (i >= monsterItems)
+			//			prefix = "Monster ";
+			//		std::cout << prefix << "Item " << i << ": " << item[itemactive[i]]._iIName << " (" << item[itemactive[i]]._iSeed << ")" << std::endl;
+			//	}
+			//}
 			if (exportLevels)
 				ExportDun();
 		}
