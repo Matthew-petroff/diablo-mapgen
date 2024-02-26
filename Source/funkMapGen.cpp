@@ -234,7 +234,7 @@ bool IsGoodLevel()
 
 		bool isStairsVisibile = IsVisibleSpawn() || IsVisiblePrevious();
 		StairsDownPrevious = StairsDown;
-		
+
 		if (currlevel != 9 && isStairsVisibile)
 			return true;
 
@@ -470,7 +470,10 @@ int main(int argc, char **argv)
 			std::cout << "processing seed " << seed << std::endl;
 		int elapsed = time(NULL) - seconds;
 		if (elapsed >= 10) {
-			std::cerr << "processing seed " << seed << "(" << ((seed - startSeed) / seedCount) << "%) " << ((seed - prevseed) / 10) << "seed/s" << std::endl;
+			int pct = 100 * (seed - startSeed) / seedCount;
+			int speed = ((seed - prevseed) / 10);
+			int eta = (seedCount - (seed - startSeed)) / speed;
+			std::cerr << "processing seed " << seed << " (" << pct << "% eta: " << eta << "s) " << speed << "seed/s" << std::endl;
 			seconds += elapsed;
 			prevseed = seed;
 		}
