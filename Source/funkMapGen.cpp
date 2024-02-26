@@ -464,13 +464,15 @@ int main(int argc, char **argv)
 	}
 
 	int seconds = time(NULL);
+	uint32_t prevseed = startSeed;
 	for (uint32_t seed = startSeed; seed < startSeed + seedCount; seed++) {
 		if (!quiet)
 			std::cout << "processing seed " << seed << std::endl;
 		int elapsed = time(NULL) - seconds;
-		if (elapsed >= 1) {
-			std::cerr << "processing seed " << seed << std::endl;
+		if (elapsed >= 10) {
+			std::cerr << "processing seed " << seed << "(" << ((seed - startSeed) / seedCount) << "%) " << ((seed - prevseed) / 10) << "seed/s" << std::endl;
 			seconds += elapsed;
+			prevseed = seed;
 		}
 
 		lengthPathToDlvl9 = 0;
