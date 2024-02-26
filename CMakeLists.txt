@@ -10,8 +10,7 @@ project(DiabloMapGen
 set(PROJECT_VERSION_WITH_SUFFIX "${VERSION_PREFIX}${VERSION_SUFFIX}")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions -O3 -flto -funroll-loops -march=native")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions -O2 -funroll-loops")
 elseif(MSVC)
   # Enable PGO for MSVC
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Ox /GL")
