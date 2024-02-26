@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-  message(WARNING [[In-source build detected, please eg. create a new directory and use `cmake ..`]])
+  message(WARNING "In-source build detected, please create a new directory and use 'cmake ..'")
 endif()
 
 project(DiabloMapGen
@@ -10,10 +10,12 @@ project(DiabloMapGen
 set(PROJECT_VERSION_WITH_SUFFIX "${VERSION_PREFIX}${VERSION_SUFFIX}")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions -O3 -flto -funroll-loops -march=native")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
 elseif(MSVC)
-  string(REGEX REPLACE "/EHsc" "/EHs-c-" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  string(REGEX REPLACE "/GR" "/GR-" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  # Enable PGO for MSVC
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Ox /GL")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LTCG")
 endif()
 
 set(CMAKE_CXX_STANDARD 20)
