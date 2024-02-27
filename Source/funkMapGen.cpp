@@ -524,6 +524,13 @@ int main(int argc, char **argv)
 			//InitItems();
 			//CreateThemeRooms();
 
+			// We need to call InitItems() to reset the item array,
+			// but we don't want to actually generate ground items
+			// so we temporarily pretend we are generating a setlevel
+			setlevel = true;
+			InitItems();
+			setlevel = false;
+
 			int monsterItems = numitems;
 			for (int i = 0; i < nummonsters; i++) {
 				int mid = monstactive[i];
