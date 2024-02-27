@@ -509,7 +509,10 @@ int main(int argc, char **argv)
 			createSpecificDungeon();
 			InitStairCordinates();
 
-			if (CalcStairsChebyshevDistance() > 10)
+			if (CalcStairsChebyshevDistance() > 5)
+				continue;
+
+			if (Spawn.x <= StairsDown.x || Spawn.y >= StairsDown.y)
 				continue;
 
 			SetRndSeed(themeSeed);
