@@ -1,2 +1,2 @@
 #pragma once
-void ExportDun();
+void ExportDun(int seed);

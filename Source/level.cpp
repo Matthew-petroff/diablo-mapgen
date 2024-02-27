@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "../types.h"
+#include "engine.h"
 #include "gendung.h"
 #include "monstdat.h"
 #include "monster.h"
@@ -15,9 +16,11 @@ inline void WriteLE16(FILE *out, uint16_t val)
 	fwrite(&val, 1, 2, out);
 }
 
-void ExportDun()
+void ExportDun(int seed)
 {
-	FILE *dunFile = fopen("levelName.dun", "wb");
+	char fileName[32];
+	sprintf(fileName, "%d-%d-%d.dun", seed, currlevel, glSeedTbl[currlevel]);
+	FILE *dunFile = fopen(fileName, "wb");
 
 	WriteLE16(dunFile, DMAXX);
 	WriteLE16(dunFile, DMAXY);

@@ -559,7 +559,6 @@ int main(int argc, char **argv)
 			}
 			if (foundPuzzler)
 				std::cout << "Game seed: " << seed << std::endl;
-			continue;
 
 			//if (!quiet) {
 			//	std::cout << "Monster Count: " << nummonsters << std::endl;
@@ -586,7 +585,8 @@ int main(int argc, char **argv)
 			//	}
 			//}
 			if (exportLevels)
-				ExportDun();
+				ExportDun(seed);
+			continue;
 		}
 
 		for (int level = 9; level < NUMLEVELS; level++) {
@@ -609,7 +609,7 @@ int main(int argc, char **argv)
 			if (!quiet)
 				printAsciiLevel();
 			if (exportLevels)
-				ExportDun();
+				ExportDun(seed);
 		}
 	}
 
