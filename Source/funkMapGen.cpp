@@ -72,198 +72,10 @@ static int InitLevelType(int l)
 	return DTYPE_HELL;
 }
 
-void whatleveltype()
-{
-	switch (currlevel) {
-	case 1:
-		leveltype = DTYPE_CATHEDRAL;
-		break;
-	case 5:
-		leveltype = DTYPE_CATACOMBS;
-		break;
-	case 9:
-		leveltype = DTYPE_CAVES;
-		break;
-	case 13:
-		leveltype = DTYPE_HELL;
-		break;
-	default:
-		return;
-	}
-
-	LoadLvlGFX();
-	FillSolidBlockTbls();
-}
-
 Point Spawn;
 Point StairsDown;
 Point StairsDownPrevious;
-
-void InitStairCordinates()
-{
-	if (leveltype == DTYPE_CATHEDRAL)
-		InitL1Triggers();
-	else if (leveltype == DTYPE_CATACOMBS)
-		InitL2Triggers();
-	else if (leveltype == DTYPE_CAVES)
-		InitL3Triggers();
-	else if (leveltype == DTYPE_HELL)
-		InitL4Triggers();
-
-	Spawn = { -1, -1 };
-	StairsDown = { -1, -1 };
-
-	for (int i = 0; i < numtrigs; i++) {
-		if (trigs[i]._tmsg == WM_DIABNEXTLVL) {
-			StairsDown = { trigs[i]._tx, trigs[i]._ty };
-		} else if (trigs[i]._tmsg == WM_DIABPREVLVL) {
-			if (leveltype == DTYPE_CATHEDRAL)
-				Spawn = { trigs[i]._tx + 1, trigs[i]._ty + 2 };
-			else if (leveltype == DTYPE_CATACOMBS)
-				Spawn = { trigs[i]._tx + 1, trigs[i]._ty + 1 };
-			else if (leveltype == DTYPE_CAVES)
-				Spawn = { trigs[i]._tx, trigs[i]._ty + 1 };
-			else if (leveltype == DTYPE_HELL)
-				Spawn = { trigs[i]._tx + 1, trigs[i]._ty };
-		}
-	}
-}
-
-BOOL PosOkPlayer(int pnum, int x, int y)
-{
-	if (x < 0 || y < 0 || x >= MAXDUNX || y >= MAXDUNY)
-		return FALSE;
-	int tileId = dPiece[x][y];
-	if (tileId == 0)
-		return FALSE;
-	if (nSolidTable[tileId])
-		return FALSE;
-
-	// if (dObject[x][y] != 0) {
-	//  char bv;
-	//	if (dObject[x][y] > 0) {
-	//		bv = dObject[x][y] - 1;
-	//	} else {
-	//		bv = -(dObject[x][y] + 1);
-	//	}
-	//	if (object[bv]._oSolidFlag) {
-	//		return FALSE;
-	//	}
-	// }
-
-	return TRUE;
-}
-
 char Path[MAX_PATH_LENGTH];
-
-int PathLength()
-{
-	std::memset(Path, 0, sizeof(Path));
-
-	return FindPath(PosOkPlayer, 0, Spawn.x, Spawn.y, StairsDown.x, StairsDown.y, Path);
-}
-
-int CalcStairsChebyshevDistance()
-{
-	if (Spawn == Point { -1, -1 } || StairsDown == Point { -1, -1 }) {
-		return -1;
-	}
-
-	int horizontal = std::max(Spawn.x, StairsDown.x) - std::min(Spawn.x, StairsDown.x);
-	int vertical = std::max(Spawn.y, StairsDown.y) - std::min(Spawn.y, StairsDown.y);
-
-	return std::max(horizontal, vertical);
-}
-
-bool IsVisibleSpawn()
-{
-	if (Spawn == Point { -1, -1 } || StairsDown == Point { -1, -1 }) {
-		return false;
-	}
-
-	int horizontal = StairsDown.x - Spawn.x + 10;
-	int vertical = StairsDown.y - Spawn.y + 10;
-
-	if (horizontal < 0 || horizontal > MAXVIEWX)
-		return false;
-	if (vertical < 0 || vertical > MAXVIEWY)
-		return false;
-	return isVisible[vertical][horizontal];
-}
-
-bool IsVisiblePrevious()
-{
-	if (StairsDownPrevious == Point { -1, -1 } || StairsDown == Point { -1, -1 }) {
-		return false;
-	}
-
-	int horizontal = StairsDown.x - StairsDownPrevious.x + 10;
-	int vertical = StairsDown.y - StairsDownPrevious.y + 10;
-
-	if (horizontal < 0 || horizontal > MAXVIEWX)
-		return false;
-	if (vertical < 0 || vertical > MAXVIEWY)
-		return false;
-	return isVisible[vertical][horizontal];
-}
-
-int lengthPathToDlvl9 = 0;
-
-bool IsGoodLevel()
-{
-	int maxDistance = 20;
-	int lengthMaxPathToDlvl9 = 72;
-
-	if (leveltype == DTYPE_CATACOMBS || leveltype == DTYPE_CATHEDRAL) {
-		int cDistance = CalcStairsChebyshevDistance();
-		StairsDownPrevious = StairsDown;
-
-		if (cDistance != -1 && cDistance > maxDistance)
-			return false;
-
-		int stairsPath = PathLength();
-		lengthPathToDlvl9 = lengthPathToDlvl9 + stairsPath;
-
-		if (lengthPathToDlvl9 > lengthMaxPathToDlvl9)
-			return false;
-		if (stairsPath == 0 || stairsPath > maxDistance)
-			return false;
-	}else //(leveltype == DTYPE_CAVES || leveltype == DTYPE_HELL)
-	{
-		maxDistance = 15;
-
-		bool isStairsVisibile = IsVisibleSpawn() || IsVisiblePrevious();
-		StairsDownPrevious = StairsDown;
-
-		if (currlevel != 9 && isStairsVisibile)
-			return true;
-
-		int cDistance = CalcStairsChebyshevDistance(); // CONDITIONALLY REWORK REQUIRED: WITH TELEPORT, DLVL 10+ DEPENDING ON DESTINATION VECTOR, MOVEMENT DISTANCE WILL BE SHORTER OR LONGER
-
-		if (cDistance != -1 && cDistance > maxDistance)
-			return false;
-
-		int stairsPath = PathLength(); // CONDITIONALLY OBSOLETED: WITH TELEPORT, DLVL 10+ WILL NOT USE THIS PATHING. ONLY USED FOR PATHING ON DLVL9
-
-		if (stairsPath == 0 || stairsPath > maxDistance)
-			return false;
-	}
-	return true;
-}
-
-void createSpecificDungeon()
-{
-	uint32_t lseed = glSeedTbl[currlevel];
-	if (leveltype == DTYPE_CATHEDRAL)
-		CreateL5Dungeon(lseed, 0);
-	else if (leveltype == DTYPE_CATACOMBS)
-		CreateL2Dungeon(lseed, 0);
-	else if (leveltype == DTYPE_CAVES)
-		CreateL3Dungeon(lseed, 0);
-	else if (leveltype == DTYPE_HELL)
-		CreateL4Dungeon(lseed, 0);
-}
-
 /**
  * @brief GET MAIN SEED, GET ALL MAP SEEDS
  * @return nothing, but updates RNG seeds list glSeedTbl[i]
@@ -434,6 +246,68 @@ void printHelp()
 
 extern int sglGameSeed;
 
+#define TEMPLATEX 8
+#define TEMPLATEY 8
+
+const BYTE GROOBO2[TEMPLATEX][TEMPLATEY] = {
+	// clang-format off
+    {   0,  0,  0,  0,  8,  0,  0,  0 },
+    {   0,  8,  8, 51, 50,  8,  8, 89 },
+    {   8,  8, 11, 48, 49,  3, 11, 88 },
+    {   8,  8, 47,106,  7, 13, 12,106 },
+    {   8,  8, 46,107,  7,106,108,106 },
+    {   0,  8,  1, 14,106,106,  5, 14 },
+    {   0,  0,  8,  1, 14,106,  4,  0 },
+    {   0,  0,  0,  0, 12,  0,  0,  0 },
+    // clang-format on
+};
+
+const BYTE GROOBO[TEMPLATEX][TEMPLATEY] = {
+	// clang-format off
+    {   0,  0,  0,  0,  8,  0,  0,  0 },
+    {   0,  8,  8, 51, 50,  8,  8, 89 },
+    {   8,  8, 11, 48, 49,  3, 11, 88 },
+    {   8,  8, 47,106,  7, 13, 12,106 },
+    {   8,  8, 46,107,  7,106,108,106 },
+    {   0,  8,  1, 14,106,106,  5, 14 },
+    {   0,  0,  8,  1, 14,106,  4,  0 },
+    {   0,  0,  0,  0, 12,  0,  0,  0 },
+    // clang-format on
+};
+
+bool MatchGroobo() {
+	bool foundStairs = false;
+    int sx = 0;
+    int sy = 0;
+    for (int y = 0; y < DMAXX && !foundStairs; y++) {
+        for (int x = 0; x < DMAXY; x++) {
+			if (dungeon[x][y] == 51) {
+				sx = x - 3;
+				sy = y - 1;
+				foundStairs = true;
+				break;
+			}
+        }
+    }
+
+    if (sx < 0 || sy < 0 || sx >= DMAXX - TEMPLATEX || sx >= DMAXX - TEMPLATEX)
+		return false;
+
+	bool found = true;
+	for (int column = 0; column < TEMPLATEX; column++) {
+		for (int row = 0; row < TEMPLATEY; row++) {
+			if (GROOBO[row][column] == 0) continue;
+			if (dungeon[sx + column][sy + row] != GROOBO[row][column]) {
+				found = false;
+				break;
+			}
+		}
+		if (!found) return false;
+	}
+
+    return true;
+}
+
 int main(int argc, char **argv)
 {
 	uint32_t startSeed = 0;
@@ -463,11 +337,12 @@ int main(int argc, char **argv)
 		}
 	}
 
+	currlevel = 9;
+	leveltype = DTYPE_CAVES;
+
 	int seconds = time(NULL);
 	uint32_t prevseed = startSeed;
 	for (uint32_t seed = startSeed; seed < startSeed + seedCount; seed++) {
-		if (!quiet)
-			std::cout << "processing seed " << seed << std::endl;
 		int elapsed = time(NULL) - seconds;
 		if (elapsed >= 10) {
 			int pct = 100 * (seed - startSeed) / seedCount;
@@ -478,142 +353,17 @@ int main(int argc, char **argv)
 			prevseed = seed;
 		}
 
-		lengthPathToDlvl9 = 0;
-		seedSelection(seed);
-		InitQuests();
-		//if (quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
-		//	if (verbose)
-		//		std::cout << "Game Seed: " << sgGameInitInfo.dwSeed << " thrown out: Sign Quest" << std::endl;
-		//	continue;
-		//}
-		//if (quests[Q_WARLORD]._qactive != QUEST_NOTAVAIL) {
-		//	if (verbose)
-		//		std::cout << "Game Seed: " << sgGameInitInfo.dwSeed << " thrown out: Warlord" << std::endl;
-		//	continue;
-		//}
+		glSeedTbl[9] = seed;
 
-		{
-			currlevel = 9;
-
-			InitLevelMonsters();
-			SetRndSeed(glSeedTbl[currlevel]);
-			GetLevelMTypes();
-			bool lavaLordFound = false;
-			for (int i = 0; i < nummtypes; i++)
-				lavaLordFound |= Monsters[i].mtype == MT_WMAGMA;
-			if (!lavaLordFound)
-				continue;
-			int themeSeed = sglGameSeed;
-
-			whatleveltype();
-			createSpecificDungeon();
-			InitStairCordinates();
-
-			if (CalcStairsChebyshevDistance() > 5)
-				continue;
-
-			if (Spawn.x <= StairsDown.x || Spawn.y >= StairsDown.y)
-				continue;
-
-			SetRndSeed(themeSeed);
-			InitThemes();
-
-			SetRndSeed(glSeedTbl[currlevel]);
-			HoldThemeRooms();
-			GetRndSeed();
-			InitMonsters();
-			//GetRndSeed();
-			//InitObjects();
-			//InitItems();
-			//CreateThemeRooms();
-
-			// We need to call InitItems() to reset the item array,
-			// but we don't want to actually generate ground items
-			// so we temporarily pretend we are generating a setlevel
-			setlevel = true;
-			InitItems();
-			setlevel = false;
-
-			int monsterItems = numitems;
-			for (int i = 0; i < nummonsters; i++) {
-				int mid = monstactive[i];
-				if (monster[mid].MType->mtype != MT_WMAGMA)
-					continue;
-				SetRndSeed(monster[mid]._mRndSeed);
-				SpawnItem(mid, monster[mid]._mx, monster[mid]._my, TRUE);
-			}
-
-			//int objectItems = numitems;
-			//for (int i = 0; i < nobjects; i++) {
-			//	int oid = objectactive[i];
-			//	createItemsFromObject(oid);
-			//}
-
-			bool foundPuzzler = false;
-			for (int i = 0; i < numitems; i++) {
-				int ii = itemactive[i];
-				if (item[ii]._iMagical == ITEM_QUALITY_UNIQUE && item[ii]._iUid == 60) {
-					int horizontal = std::max(Spawn.x, item[ii]._ix) - std::min(Spawn.x, item[ii]._ix);
-					int vertical = std::max(Spawn.y, item[ii]._iy) - std::min(Spawn.y, item[ii]._iy);
-					int distance = std::max(horizontal, vertical);
-					if (distance < 20)
-						foundPuzzler = true;
-				}
-			}
-			if (foundPuzzler)
-				std::cout << "Game seed: " << seed << std::endl;
-
-			//if (!quiet) {
-			//	std::cout << "Monster Count: " << nummonsters << std::endl;
-			//	for (int i = 0; i < nummonsters; i++) {
-			//		std::cout << "Monster " << i << ": " << monster[monstactive[i]].mName << " (" << monster[monstactive[i]]._mRndSeed << ")" << std::endl;
-			//	}
-			//	std::cout << std::endl;
-			//	std::cout << "Object Count: " << nobjects << std::endl;
-			//	for (int i = 0; i < nobjects; i++) {
-			//		int oid = objectactive[i];
-			//		char objstr[50];
-			//		GetObjectStr(oid, objstr);
-			//		std::cout << "Object " << i << ": " << objstr << " (" << object[oid]._oRndSeed << ")" << std::endl;
-			//	}
-			//	std::cout << std::endl;
-			//	std::cout << "Item Count: " << numitems << std::endl;
-			//	for (int i = 0; i < numitems; i++) {
-			//		std::string prefix = "";
-			//		if (i >= objectItems)
-			//			prefix = "Object ";
-			//		else if (i >= monsterItems)
-			//			prefix = "Monster ";
-			//		std::cout << prefix << "Item " << i << ": " << item[itemactive[i]]._iIName << " (" << item[itemactive[i]]._iSeed << ")" << std::endl;
-			//	}
-			//}
-			if (exportLevels)
-				ExportDun(seed);
+		if (!CreateL3Dungeon(seed, 0) || !MatchGroobo())
 			continue;
-		}
 
-		for (int level = 9; level < NUMLEVELS; level++) {
-			currlevel = level;
-			whatleveltype();
-			createSpecificDungeon();
-			InitStairCordinates();
+		std::cout << "Game seed: " << seed << std::endl;
 
-			if (!IsGoodLevel()) {
-				if (level > quality || verbose) {
-					std::cout << "Game Seed: " << sgGameInitInfo.dwSeed << " quality: ";
-					for (int p = 0; p < level - 1; p++) {
-						std::cout << "+";
-					}
-					std::cout << " (" << (level - 1) << ")" << std::endl;
-					break;
-				}
-				break;
-			}
-			if (!quiet)
-				printAsciiLevel();
-			if (exportLevels)
-				ExportDun(seed);
-		}
+		if (!quiet)
+			printAsciiLevel();
+		if (exportLevels)
+			ExportDun(seed);
 	}
 
 	return 0;

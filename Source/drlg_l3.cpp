@@ -2315,7 +2315,7 @@ BOOL DRLG_L3Lockout()
 	return t == lockoutcnt;
 }
 
-static void DRLG_L3(int entry)
+static bool DRLG_L3(int entry)
 {
 	int x1, y1, x2, y2, i, j;
 	BOOL found, genok;
@@ -2350,7 +2350,7 @@ static void DRLG_L3(int entry)
 				if (DRLG_L3GetFloorArea() >= 600) {
 					found = DRLG_L3Lockout();
 				} else {
-					found = FALSE;
+					return false;
 				}
 			} while (!found);
 			DRLG_L3MakeMegas();
@@ -2609,6 +2609,7 @@ static void DRLG_L3(int entry)
 	}
 
 	DRLG_Init_Globals();
+					return true;
 }
 
 static void DRLG_L3Pass3()
@@ -2710,7 +2711,7 @@ static void DRLG_L3Pass3()
 	}
 }
 
-void CreateL3Dungeon(DWORD rseed, int entry)
+bool CreateL3Dungeon(DWORD rseed, int entry)
 {
 	int i, j;
 
@@ -2721,7 +2722,7 @@ void CreateL3Dungeon(DWORD rseed, int entry)
 	dmaxy = 96;
 	DRLG_InitTrans();
 	DRLG_InitSetPC();
-	DRLG_L3(entry);
+	return DRLG_L3(entry);
 	DRLG_L3Pass3();
 
 #ifdef HELLFIRE
