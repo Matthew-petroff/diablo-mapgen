@@ -68,3 +68,6 @@ if(CMAKE_STRIP)
     COMMAND $<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRel>>:${CMAKE_STRIP}>
     ARGS $<TARGET_FILE:${BIN_TARGET}>)
 endif()
+
+add_executable (seed_table "tools/seed_table.cpp")
+target_compile_features(seed_table PUBLIC cxx_std_20)
