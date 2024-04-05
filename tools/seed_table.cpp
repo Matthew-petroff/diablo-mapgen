@@ -174,7 +174,7 @@ struct GameState {
 		}
 		startingSeed = backtrackRng(state);
 
-		state = seed;
+		state = useNegatedState ? -static_cast<int32_t>(seed) : seed;
 		for (int i = level + 1; i < seedTable.size(); ++i) {
 			state = advanceRng(state);
 			seedTable[i] = std::abs(static_cast<int32_t>(state));
