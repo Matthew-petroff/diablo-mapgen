@@ -80,3 +80,6 @@ endif()
 
 add_executable (seed_table "tools/seed_table.cpp")
 target_compile_features(seed_table PUBLIC cxx_std_20)
+
+add_executable (sort_candidates "tools/sort_candidates.cpp")
+target_compile_features(sort_candidates PUBLIC cxx_std_20)

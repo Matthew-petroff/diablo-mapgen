@@ -185,7 +185,7 @@ struct GameState {
 static void renderSeedTable(const GameState &state) {
 
 	time_t startingTime = std::chrono::system_clock::to_time_t(std::chrono::time_point<std::chrono::system_clock>(std::chrono::seconds(state.startingSeed)));
-	std::cout << "Starting seed: " << state.startingSeed << " (" << std::put_time(std::gmtime(&startingTime), "%Y-%m-%d %H:%M:%S UTC");
+	std::cout << "Starting seed: " << state.startingSeed << " (" << std::put_time(std::gmtime(&startingTime), "%Y-%m-%d %H:%M:%S");
 	if (315532800 <= state.startingSeed && state.startingSeed <= 2177452799U) {
 		std::cout << " can be reached by setting the system time on windows)\n";
 	}
