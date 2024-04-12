@@ -98,3 +98,9 @@ These terms clarify the different types of seeds used in Diablo MapGen and provi
 - **Game Seed:** The time() value set on game creation. It serves as the initial seed for generating dungeon seeds and determines the overall characteristics of a game session.
 - **Dungeon Seed:** The floor-specific seed saved to the seed table. This seed determines the placement of monsters and items within each floor of the dungeon. The dungeon seed is derived from the game seed at the beginning of the game session.
 - **Level Seed:** This is the value that generates the specific layout of tiles for a given level in the dungeon. The level seed is derived by starting with the dungeon seed and then letting the RNG advance each time the level generator does not produce a valid level.
+
+## Additional tools
+
+`seed_table` shows what dungeon seeds correspond to a given game seed and when that game occurred (as game seeds are a unix timestamp representing the local date/time), or show what game seeds lead to a given dungeon seed. This allows expanding an ideal dungeon seed into a complete dungeon table to evaluate the overall run.
+
+`sort_candidates` is mainly intended for analysis, if you have a list of dungeon seeds and you want to find out which ones occurred in games started near a certain point of time you can use this tool to sort by proximity to a unix timestamp.
