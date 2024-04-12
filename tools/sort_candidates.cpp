@@ -14,7 +14,7 @@
 
 static void showUsage(std::string_view programName)
 {
-	std::cerr << "Usage: " << programName << " <target_timestamp> <level> seeds.txt\n";
+	std::cerr << "Usage: " << programName << " <target_timestamp> <level> seeds.txt [--verbose]\n";
 }
 
 template <typename resultType, typename intermediateType>
@@ -71,6 +71,23 @@ static int32_t absShiftMod(uint32_t state, int32_t limit)
 	return (seed >> 16) % limit;
 }
 
+static uint32_t absDelta(uint32_t a, uint32_t b)
+{
+	return static_cast<uint32_t>(abs(static_cast<int64_t>(a) - b));
+}
+
+static auto formatDate(uint32_t timestamp)
+{
+	time_t time = std::chrono::system_clock::to_time_t(std::chrono::time_point<std::chrono::system_clock>(std::chrono::seconds(timestamp)));
+	return std::put_time(std::gmtime(&time), "%Y-%m-%d %H:%M:%S");
+}
+
+struct SeedMap {
+	uint32_t dungeonSeed;
+	uint32_t gameSeed;
+	std::optional<uint32_t> altGameSeed {};
+};
+
 int main(int argc, char *argv[])
 {
 	if (argc < 4) {
@@ -100,7 +117,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	std::map<uint32_t, std::vector<uint32_t>> seedsByDelta {};
+	std::map<uint32_t, std::vector<SeedMap>> seedsByDelta {};
 
 	for (std::string line; std::getline(seedsFile, line);) {
 		std::optional<uint32_t> seed = parseSeed(line);
@@ -115,30 +132,40 @@ int main(int argc, char *argv[])
 		}
 		uint32_t startingSeed = backtrackRng(state);
 
-		uint32_t delta = static_cast<uint32_t>(abs(static_cast<int64_t>(*targetTimestamp) - startingSeed));
+		uint32_t delta = absDelta(*targetTimestamp, startingSeed);
 
 		if (*seed <= std::numeric_limits<int32_t>::max()) {
 			state = -static_cast<int32_t>(*seed);
 			for (int i = *level - 1; i >= 0; --i) {
 				state = backtrackRng(state);
 			}
-			startingSeed = backtrackRng(state);
+			uint32_t negStartingSeed = backtrackRng(state);
 
-			delta = std::min(delta, static_cast<uint32_t>(abs(static_cast<int64_t>(*targetTimestamp) - startingSeed)));
-		}
+			uint32_t negDelta = absDelta(*targetTimestamp, startingSeed);
 
-		if (seedsByDelta.contains(delta)) {
-			seedsByDelta[delta].push_back(*seed);
+			if (negDelta < delta) {
+				seedsByDelta[negDelta].emplace_back(*seed, negStartingSeed, startingSeed);
+			} else {
+				seedsByDelta[delta].emplace_back(*seed, startingSeed, negStartingSeed);
+			}
+		} else {
+			seedsByDelta[delta].emplace_back(*seed, startingSeed);
 		}
-		else {
-			seedsByDelta.emplace(delta, std::vector { *seed });
-		}
-
 	}
+
+	using namespace std::literals;
+	bool verbose = (argc >= 4 && "--verbose"sv == argv[4]);
 
 	for (auto &[_, seeds] : seedsByDelta) {
 		for (auto seed : seeds) {
-			std::cout << seed << "\n";
+			std::cout << seed.dungeonSeed;
+			if (verbose) {
+				std::cout << "\t" << seed.gameSeed << "\t" << formatDate(seed.gameSeed);
+				if (seed.altGameSeed) {
+					std::cout << "\t" << *seed.altGameSeed << "\t" << formatDate(*seed.altGameSeed);
+				}
+			}
+			std::cout << "\n";
 		}
 	}
 
