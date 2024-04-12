@@ -247,7 +247,7 @@ int main(int argc, char* argv[]) {
 	if (argc > 2) {
 		level = parseLevel(*++argv);
 		if (!level) {
-			std::cerr << "Could not parse level.\n";
+			std::cerr << "Could not parse dungeon level.\n";
 			return 1;
 		}
 		if (*level == 0) {
@@ -257,7 +257,7 @@ int main(int argc, char* argv[]) {
 
 	std::optional<uint32_t> seed = parseSeed(*++argv);
 	if (!seed) {
-		std::cerr << "Could not parse seed.\n";
+		std::cerr << "Could not parse " << (level ? "dungeon" : "game") << "seed.\n";
 		return 1;
 	}
 
@@ -267,15 +267,15 @@ int main(int argc, char* argv[]) {
 
 	if (level) {
 		if (0 < *seed && *seed <= std::numeric_limits<int32_t>::max()) {
-			std::cout << "\nSeed could have been naturally generated from a negated state, alternative table follows:\n";
+			std::cout << "\nDungeon seed could have been naturally generated from a negated state, alternative table follows:\n";
 			state = GameState(*level, *seed, true);
 			renderSeedTable(state);
 		}
 		else if (*seed == 0 || *seed == static_cast<uint32_t>(std::numeric_limits<int32_t>::min())) {
-			std::cout << "Only one state could lead to that seed.\n";
+			std::cout << "Only one state could lead to that dungeon seed.\n";
 		}
 		else {
-			std::cout << "This seed can only be used with a modified save.\n";
+			std::cout << "This dungeon seed can only be used with a modified save.\n";
 		}
 	}
 
