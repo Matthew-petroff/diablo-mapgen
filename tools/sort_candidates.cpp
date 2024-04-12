@@ -27,6 +27,7 @@ std::optional<resultType> parseNumber(std::string_view numericString, intermedia
 			return static_cast<resultType>(value);
 		}
 		// else fall through
+		[[fallthrough]];
 	case std::errc::result_out_of_range:
 		std::cerr << numericString << " is outside the expected range of " << minValue << " to " << maxValue << ".\n";
 		break;
@@ -128,7 +129,7 @@ int main(int argc, char *argv[])
 
 		uint32_t state = *seed;
 		for (int i = *level - 1; i >= 0; --i) {
-			state        = backtrackRng(state);
+			state = backtrackRng(state);
 		}
 		uint32_t startingSeed = backtrackRng(state);
 
@@ -157,7 +158,7 @@ int main(int argc, char *argv[])
 	bool verbose = (argc >= 4 && "--verbose"sv == argv[4]);
 
 	for (auto &[_, seeds] : seedsByDelta) {
-		for (auto seed : seeds) {
+		for (auto &seed : seeds) {
 			std::cout << seed.dungeonSeed;
 			if (verbose) {
 				std::cout << "\t" << seed.gameSeed << "\t" << formatDate(seed.gameSeed);
