@@ -67,12 +67,17 @@ struct Quests {
 	bool butcher  = true;
 	bool pwater   = true;
 	bool skelking = true;
+	bool garbund  = true;
 	bool ltbanner = true;
 	bool blood    = true;
+	bool rock     = true;
 	bool schamb   = true;
 	bool blind    = true;
+	bool zhar     = true;
+	bool mushroom = true;
 	bool anvil    = true;
 	bool warlord  = true;
+	bool veil     = true;
 };
 
 static int32_t absShiftMod(uint32_t state, int32_t limit)
@@ -102,8 +107,7 @@ static Quests determineActiveQuests(uint32_t seed)
 		activeQuests.ltbanner = false;
 		break;
 	case 2:
-		// Gharbad the Weak doesn't impact map generation
-		// activeQuests.garbund = false;
+		activeQuests.garbund = false;
 		break;
 	case std::numeric_limits<int32_t>::min():
 	default:
@@ -117,8 +121,7 @@ static Quests determineActiveQuests(uint32_t seed)
 		activeQuests.blind = false;
 		break;
 	case 1:
-		// The Magic Rock doesn't impact map generation
-		// activeQuests.rock = false;
+		activeQuests.rock = false;
 		break;
 	case 2:
 		activeQuests.blood = false;
@@ -132,12 +135,10 @@ static Quests determineActiveQuests(uint32_t seed)
 	state = advanceRng(state);
 	switch (absShiftMod(state, 3)) {
 	case 0:
-		// Black Mushroom doesn't impact map generation
-		// activeQuests.mushroom = false;
+		activeQuests.mushroom = false;
 		break;
 	case 1:
-		// Zhar the Mad doesn't impact map generation
-		// activeQuests.zhar = false;
+		activeQuests.zhar = false;
 		break;
 	case 2:
 		activeQuests.anvil = false;
@@ -149,8 +150,7 @@ static Quests determineActiveQuests(uint32_t seed)
 	}
 
 	if (absShiftMod(advanceRng(state), 2) == 0) {
-		// Lachdanan doesn't impact map generation
-		// activeQuests.veil = false;
+		activeQuests.veil = false;
 	} else {
 		activeQuests.warlord = false;
 	}
@@ -220,18 +220,38 @@ static void renderSeedTable(const GameState &state)
 			}
 		} else if (i == 3 && activeQuests.skelking) {
 			std::cout << " (with The Curse of King Leoric [Q_SKELKING])";
-		} else if (i == 4 && activeQuests.ltbanner) {
-			std::cout << " (with Ogden's Sign [Q_LTBANNER])";
-		} else if (i == 5 && activeQuests.blood) {
-			std::cout << " (with Valor [Q_BLOOD])";
+		} else if (i == 4) {
+			if (activeQuests.garbund && activeQuests.ltbanner) {
+				std::cout << " (with Gharbad the Weak and Ogden's Sign [Q_GARBUND && Q_LTBANNER])";
+			} else if (activeQuests.garbund) {
+				std::cout << " (with Gharbad the Weak [Q_GARBUND])";
+			} else if (activeQuests.ltbanner) {
+				std::cout << " (with Ogden's Sign [Q_LTBANNER])";
+			}
+		} else if (i == 5) {
+			if (activeQuests.blood && activeQuests.rock) {
+				std::cout << " (with Arkaine's Valor and The Magic Rock [Q_BLOOD && Q_ROCK])";
+			} else
+			if (activeQuests.blood) {
+				std::cout << " (with Arkaine's Valor [Q_BLOOD])";
+			} else
+			if (activeQuests.rock) {
+				std::cout << " (with The Magic Rock [Q_ROCK])";
+			}
 		} else if (i == 6 && activeQuests.schamb) {
 			std::cout << " (with Chamber of Bone [Q_SCHAMB])";
 		} else if (i == 7 && activeQuests.blind) {
 			std::cout << " (with Halls of the Blind [Q_BLIND])";
+		} else if (i == 8 && activeQuests.zhar) {
+			std::cout << " (with Zhar the Mad [Q_ZHAR])";
+		} else if (i == 9 && activeQuests.mushroom) {
+			std::cout << " (with Black Mushroom [Q_MUSHROOM])";
 		} else if (i == 10 && activeQuests.anvil) {
 			std::cout << " (with Anvil of Fury [Q_ANVIL])";
 		} else if (i == 13 && activeQuests.warlord) {
 			std::cout << " (with Warlord of Blood [Q_WARLORD])";
+		} else if (i == 14 && activeQuests.veil) {
+			std::cout << " (with Lachdanan [Q_VEIL])";
 		}
 		std::cout << "\n";
 	}
