@@ -169,21 +169,11 @@ int rnd60[4] = { 60, 70, 80, 90 };
 
 void InitLevelMonsters()
 {
-	int i;
-
-	nummtypes = 0;
-	monstimgtot = 0;
-	MissileFileFlag = 0;
-
-	for (i = 0; i < MAX_LVLMTYPES; i++) {
-		Monsters[i].mPlaceFlags = 0;
-	}
-
 	ClrAllMonsters();
 	nummonsters = 0;
 	totalmonsters = MAXMONSTERS;
 
-	for (i = 0; i < MAXMONSTERS; i++) {
+	for (int i = 0; i < MAXMONSTERS; i++) {
 		monstactive[i] = i;
 	}
 
@@ -216,6 +206,14 @@ int AddMonsterType(int type, int placeflag)
 void GetLevelMTypes()
 {
 	int i;
+
+	for (i = 0; i < MAX_LVLMTYPES; i++) {
+		Monsters[i].mPlaceFlags = 0;
+	}
+	
+	nummtypes = 0;
+	monstimgtot = 0;
+	MissileFileFlag = 0;
 
 	// this array is merged with skeltypes down below.
 	int typelist[MAXMONSTERS];

@@ -16,12 +16,14 @@ bool ScannerGameSeed::skipLevel(int level)
 {
 	if (level != 9)
 		return true;
+		return false;
 
 	InitDungeonMonsters();
 
 	bool hasLavaLoards = false;
-	for (int i = 0; i < nummtypes && !hasLavaLoards; i++)
-		hasLavaLoards = Monsters[i].mtype == MT_WMAGMA;
+	for (int i = 0; i < nummtypes && !hasLavaLoards; i++) 
+		hasLavaLoards = Monsters[i].mtype == MT_WMAGMA; // TODO fix me
+
 
 	return !hasLavaLoards;
 }

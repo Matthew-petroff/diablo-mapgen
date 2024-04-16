@@ -143,20 +143,6 @@ void FindStairCordinates()
 
 void CreateDungeonContent()
 {
-	InitDungeonMonsters();
-
-	InitThemes();
-	SetRndSeed(glSeedTbl[currlevel]);
-	HoldThemeRooms();
-	GetRndSeed();
-
-	InitMonsters();
-	GetRndSeed();
-
-	InitObjects();
-
-	InitItems();
-	CreateThemeRooms();
 }
 
 std::optional<uint32_t> CreateDungeon(DungeonMode mode)
@@ -174,17 +160,6 @@ std::optional<uint32_t> CreateDungeon(DungeonMode mode)
 
 	if (mode == DungeonMode::Full || mode == DungeonMode::NoContent || mode == DungeonMode::BreakOnFailureOrNoContent) {
 		InitTriggers();
-
-		if (mode != DungeonMode::NoContent && mode != DungeonMode::BreakOnFailureOrNoContent)
-			CreateDungeonContent();
-
-		if (currlevel == 15) {
-			// Locate Lazarus warp point
-			Point point = { quests[Q_BETRAYER]._qtx, quests[Q_BETRAYER]._qty };
-			if (!nSolidTable[dPiece[point.x][point.y]])
-				POI = point;
-		}
-
 		FindStairCordinates();
 	}
 
@@ -388,9 +363,6 @@ void ParseArguments(int argc, char **argv)
 
 void InitDungeonMonsters()
 {
-	InitLevelMonsters();
-	SetRndSeed(glSeedTbl[currlevel]);
-	GetLevelMTypes();
 }
 
 int main(int argc, char **argv)
@@ -398,6 +370,15 @@ int main(int argc, char **argv)
 	ParseArguments(argc, argv);
 	InitEngine();
 	readFromFile();
+
+	SetGameSeed(1230001659);
+	InitiateLevel(9);
+	CreateDungeon(DungeonMode::Full);
+
+	SetRndSeed(glSeedTbl[currlevel]);
+	GetLevelMTypes();
+	InitThemes();
+	HoldThemeRooms();
 
 	ProgressseedMicros = micros();
 	for (uint32_t seedIndex = 0; seedIndex < Config.seedCount; seedIndex++) {
@@ -407,24 +388,74 @@ int main(int argc, char **argv)
 		}
 		printProgress(seedIndex, seed);
 
-		SetGameSeed(seed);
-		if (scanner->skipSeed())
+		memset(dMonster, 0, sizeof(dMonster));
+		InitLevelMonsters();
+
+		SetRndSeed(seed);
+		GetRndSeed();
+		InitMonsters();
+
+		if (dMonster[29][21] || dMonster[30][21] || !dMonster[31][21] || !dMonster[32][21] || dMonster[33][21])
 			continue;
 
-		for (int level = 1; level < NUMLEVELS; level++) {
-			if (scanner->skipLevel(level))
-				continue;
+		int mid = abs(dMonster[31][21]) - 1;
+		auto &targetMonster = monster[mid];
+		if (targetMonster.MType->mtype != MT_WMAGMA)
+			continue;
 
-			InitiateLevel(level);
-			std::optional<uint32_t> levelSeed = CreateDungeon(scanner->getDungeonMode());
-			if (!scanner->levelMatches(levelSeed))
-				continue;
+		memset(dItem, 0, sizeof(dItem));
+		memset(dObject, 0, sizeof(dItem));
+		numitems = 0;
+		InitObjects();
+		InitItems();
+		CreateThemeRooms();
 
-			if (Config.asciiLevels)
-				printAsciiLevel();
-			if (Config.exportLevels)
-				ExportDun(seed);
+		memset(UniqueItemFlag, 0, sizeof(UniqueItemFlag));
+
+		SetRndSeed(targetMonster._mRndSeed);
+		SpawnItem(mid, targetMonster._mx, targetMonster._my, TRUE);
+		// std::cout << "Seed " << targetMonster.mName << ":" << targetMonster._mx << "x" << targetMonster._my << std::endl;
+		bool found = false;
+		if (numitems) {
+			numitems--;
+			auto &createdItem = item[itemactive[numitems]];
+			//if (createdItem._itype == ITYPE_STAFF && createdItem._iUid == 60) {
+			if (createdItem._itype == ITYPE_STAFF && createdItem._iUid == 60) {
+				found = false;
+				std::cout << "Seed " << seed << ":" << createdItem._iIName << " (" << createdItem._iSeed << ")" << std::endl;
+				createdItem._iUid = 0;
+			}
 		}
+		if (!found)
+			continue;
+
+		// auto &createdItem = item[itemactive[numitems]];
+		// if (numitems) {
+		//	numitems--;
+		//	if (createdItem._itype == ITYPE_STAFF && createdItem._iUid == 60) {
+		//		std::cout << "Seed " << seed << ":" << createdItem._iIName << " (" << createdItem._iSeed << ")" << std::endl;
+		//		createdItem._iUid = 0;
+		//	}
+		//
+		//	dItem[createdItem._ix][createdItem._iy] = 0;
+		// }
+
+		// SetRndSeed(seed);
+		// CreateRndItem(40, 40, FALSE, TRUE, FALSE);
+		// numitems--;
+		// auto createdItem = item[itemactive[numitems]];
+		// if (createdItem._itype == ITYPE_MISC && createdItem._iSpell ==  SPL_TOWN) {
+		//	std::cout << "Seed " << seed << ":" << createdItem._iIName << " (" << createdItem._iSeed << ") " << std::endl;
+		// }
+		////if (createdItem._itype == ITYPE_RING && createdItem._iPLMana >> 6 == 19 && createdItem._iPLHP >> 6 == -22) {
+		////	int mana = createdItem._iPLMana >> 6;
+		////	int hp = createdItem._iPLHP >> 6;
+		////	std::cout << "Seed " << seed << ":" << createdItem._iIName << " (" << createdItem._iSeed << ") " << "mana " << mana << " hp " << hp << std::endl;
+		////}
+		// dItem[createdItem._ix][createdItem._iy] = 0;
+
+		std::cerr << "Forced seed " << seed << std::endl;
+		ExportDun(seed);
 	}
 
 	ShutDownEngine();
