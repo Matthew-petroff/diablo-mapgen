@@ -169,6 +169,8 @@ void printAsciiLevel()
 				std::cout << green("v");
 			else if (dObject[bobx][boby] && nSolidTable[dPiece[bobx][boby]])
 				std::cout << yellow("#");
+			else if (dMonster[bobx][boby])
+				std::cout << red("m");
 			else if (Point { bobx, boby } == POI && !nSolidTable[dPiece[bobx][boby]])
 				std::cout << red("!");
 			else if (dObject[bobx][boby])
