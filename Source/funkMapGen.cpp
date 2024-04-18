@@ -375,11 +375,6 @@ int main(int argc, char **argv)
 	InitiateLevel(9);
 	CreateDungeon(DungeonMode::Full);
 
-	SetRndSeed(glSeedTbl[currlevel]);
-	GetLevelMTypes();
-	InitThemes();
-	HoldThemeRooms();
-
 	ProgressseedMicros = micros();
 	for (uint32_t seedIndex = 0; seedIndex < Config.seedCount; seedIndex++) {
 		uint32_t seed = seedIndex + Config.startSeed;
@@ -387,6 +382,18 @@ int main(int argc, char **argv)
 			seed = SeedsFromFile[seed];
 		}
 		printProgress(seedIndex, seed);
+
+		SetRndSeed(seed);
+		GetLevelMTypes();
+
+		bool hasLavaLoards = false;
+		for (int i = 0; i < nummtypes && !hasLavaLoards; i++)
+			hasLavaLoards = Monsters[i].mtype == MT_WMAGMA;
+		if (!hasLavaLoards)
+			continue;
+
+		InitThemes();
+		HoldThemeRooms();
 
 		memset(dMonster, 0, sizeof(dMonster));
 		InitLevelMonsters();
@@ -414,12 +421,10 @@ int main(int argc, char **argv)
 
 		SetRndSeed(targetMonster._mRndSeed);
 		SpawnItem(mid, targetMonster._mx, targetMonster._my, TRUE);
-		// std::cout << "Seed " << targetMonster.mName << ":" << targetMonster._mx << "x" << targetMonster._my << std::endl;
 		bool found = false;
 		if (numitems) {
 			numitems--;
 			auto &createdItem = item[itemactive[numitems]];
-			//if (createdItem._itype == ITYPE_STAFF && createdItem._iUid == 60) {
 			if (createdItem._itype == ITYPE_STAFF && createdItem._iUid == 60) {
 				found = false;
 				std::cout << "Seed " << seed << ":" << createdItem._iIName << " (" << createdItem._iSeed << ")" << std::endl;
