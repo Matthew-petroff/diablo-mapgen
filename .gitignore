@@ -384,3 +384,6 @@ levels/
 ddraw_settings.ini
 /build*
 .codelite
+
+# clangd
+*.idx
