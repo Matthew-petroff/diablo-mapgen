@@ -211,12 +211,10 @@ void SetGameSeed(uint32_t seed)
 	memset(UniqueItemFlag, 0, sizeof(UniqueItemFlag));
 }
 
-std::vector<uint32_t> SeedsFromFile = {};
-
-void readFromFile()
+std::vector<uint32_t> readFromFile()
 {
 	if (Config.seedFile.empty())
-		return;
+		return {};
 
 	std::ifstream file(Config.seedFile);
 	if (!file.is_open()) {
@@ -227,6 +225,7 @@ void readFromFile()
 	if (!Config.quiet)
 		std::cerr << "Loading seeds from: " << Config.seedFile << std::endl;
 
+	std::vector<uint32_t> SeedsFromFile;
 	std::string line;
 	while (std::getline(file, line))
 		SeedsFromFile.push_back(std::stoll(line.substr(0, line.find(' '))));
@@ -235,6 +234,8 @@ void readFromFile()
 
 	if (file.is_open())
 		file.close();
+
+	return SeedsFromFile;
 }
 
 int ProgressseedMicros;
@@ -397,7 +398,7 @@ int main(int argc, char **argv)
 {
 	ParseArguments(argc, argv);
 	InitEngine();
-	readFromFile();
+	std::vector<uint32_t> SeedsFromFile = readFromFile();
 
 	ProgressseedMicros = micros();
 	for (uint32_t seedIndex = 0; seedIndex < Config.seedCount; seedIndex++) {
