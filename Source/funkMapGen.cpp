@@ -6,6 +6,8 @@
 #include <limits>
 #include <optional>
 #include <sstream>
+#include <string>
+#include <string_view>
 #include <vector>
 
 #include "analyzer/gameseed.h"
@@ -13,6 +15,7 @@
 #include "analyzer/pattern.h"
 #include "analyzer/puzzler.h"
 #include "analyzer/quest.h"
+#include "analyzer/scannerName.h"
 #include "analyzer/stairs.h"
 #include "analyzer/warp.h"
 #include "drlg_l1.h"
@@ -321,27 +324,13 @@ void ParseArguments(int argc, char **argv)
 				std::cerr << "Missing value for --scanner" << std::endl;
 				exit(255);
 			}
-			std::string scanner = argv[i];
-			if (scanner == "none") {
-				Config.scanner = Scanners::None;
-			} else if (scanner == "puzzler") {
-				Config.scanner = Scanners::Puzzler;
-			} else if (scanner == "path") {
-				Config.scanner = Scanners::Path;
-			} else if (scanner == "quest") {
-				Config.scanner = Scanners::Quest;
-			} else if (scanner == "warp") {
-				Config.scanner = Scanners::Warp;
-			} else if (scanner == "stairs") {
-				Config.scanner = Scanners::Stairs;
-			} else if (scanner == "pattern") {
-				Config.scanner = Scanners::Pattern;
-			} else if (scanner == "gameseed") {
-				Config.scanner = Scanners::GameSeed;
-			} else {
-				std::cerr << "Unknown scanner: " << scanner << std::endl;
+			std::string_view name = argv[i];
+			std::optional<Scanners> scanner = Scanners_FromDisplayName(name);
+			if (!scanner.has_value()) {
+				std::cerr << "Unknown scanner: " << name << std::endl;
 				exit(255);
 			}
+			Config.scanner = *scanner;
 		} else if (arg == "--seeds") {
 			i++;
 			if (argc <= i) {

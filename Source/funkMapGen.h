@@ -3,17 +3,7 @@
 #include <string>
 
 #include "engine.h"
-
-enum class Scanners {
-	None,
-	Path,
-	Quest,
-	Puzzler,
-	Stairs,
-	Warp,
-	Pattern,
-	GameSeed,
-};
+#include "analyzer/scannerName.h"
 
 struct Configuration {
 	uint32_t startSeed = 0;
