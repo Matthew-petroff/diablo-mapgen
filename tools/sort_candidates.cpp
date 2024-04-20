@@ -94,6 +94,21 @@ struct SeedMap {
 	uint32_t dungeonSeed;
 	uint32_t gameSeed;
 	std::optional<uint32_t> altGameSeed {};
+
+	SeedMap() = delete;
+
+	SeedMap(uint32_t dungeonSeed, uint32_t gameSeed)
+	    : dungeonSeed(dungeonSeed)
+	    , gameSeed(gameSeed)
+	{
+	}
+
+	SeedMap(uint32_t dungeonSeed, uint32_t gameSeed, uint32_t altGameSeed)
+	    : dungeonSeed(dungeonSeed)
+	    , gameSeed(gameSeed)
+	    , altGameSeed(altGameSeed)
+	{
+	}
 };
 
 int main(int argc, char *argv[])
