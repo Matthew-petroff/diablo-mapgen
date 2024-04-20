@@ -108,7 +108,7 @@ static Quests determineActiveQuests(uint32_t seed)
 	case 2:
 		activeQuests.garbund = false;
 		break;
-	case std::numeric_limits<int32_t>::min():
+	case -2:
 	default:
 		std::cerr << "Q_BUTCHER, Q_LTBANNER, Q_GARBUND all active\n";
 		break;
@@ -125,7 +125,7 @@ static Quests determineActiveQuests(uint32_t seed)
 	case 2:
 		activeQuests.blood = false;
 		break;
-	case std::numeric_limits<int32_t>::min():
+	case -2:
 	default:
 		std::cerr << "Q_BLIND, Q_ROCK, Q_BLOOD all active\n";
 		break;
@@ -142,7 +142,7 @@ static Quests determineActiveQuests(uint32_t seed)
 	case 2:
 		activeQuests.anvil = false;
 		break;
-	case std::numeric_limits<int32_t>::min():
+	case -2:
 	default:
 		std::cerr << "Q_MUSHROOM, Q_ZHAR, Q_ANVIL all active\n";
 		break;
