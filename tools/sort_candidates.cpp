@@ -22,7 +22,7 @@ std::optional<resultType> parseNumber(std::string_view numericString, intermedia
 {
 	intermediateType value = 0;
 	switch (std::from_chars(numericString.data(), numericString.data() + numericString.size(), value).ec) {
-	case std::errc():
+	case std::errc::success:
 		if (minValue <= value && value <= maxValue) {
 			return static_cast<resultType>(value);
 		}
