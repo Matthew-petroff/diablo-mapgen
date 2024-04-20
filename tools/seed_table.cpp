@@ -20,7 +20,14 @@ std::optional<resultType> parseNumber(std::string_view numericString, intermedia
 {
 	intermediateType value = 0;
 	switch (std::from_chars(numericString.data(), numericString.data() + numericString.size(), value).ec) {
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wswitch"
+#endif
 	case std::errc():
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 		if (minValue <= value && value <= maxValue) {
 			return static_cast<resultType>(value);
 		}
