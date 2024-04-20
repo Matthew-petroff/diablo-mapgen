@@ -101,6 +101,6 @@ These terms clarify the different types of seeds used in Diablo MapGen and provi
 
 ## Additional tools
 
-`seed_table` shows what dungeon seeds correspond to a given game seed and when that game occurred (as game seeds are a unix timestamp representing the local date/time), or show what game seeds lead to a given dungeon seed. This allows expanding an ideal dungeon seed into a complete dungeon table to evaluate the overall run.
+`seed_table` shows what dungeon seeds correspond to a given game seed and when that game occurred (as game seeds are a unix timestamp representing the UTC date/time), or show what game seeds lead to a given dungeon seed. This allows expanding an ideal dungeon seed into a complete dungeon table to evaluate the overall run.
 
 `sort_candidates` is mainly intended for analysis, if you have a list of dungeon seeds and you want to find out which ones occurred in games started near a certain point of time you can use this tool to sort by proximity to a unix timestamp.
