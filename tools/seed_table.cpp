@@ -71,7 +71,6 @@ struct Quests {
 	bool ltbanner = true;
 	bool blood    = true;
 	bool rock     = true;
-	bool schamb   = true;
 	bool blind    = true;
 	bool zhar     = true;
 	bool mushroom = true;
@@ -238,8 +237,6 @@ static void renderSeedTable(const GameState &state)
 			if (activeQuests.rock) {
 				std::cout << " (with The Magic Rock [Q_ROCK])";
 			}
-		} else if (i == 6 && activeQuests.schamb) {
-			std::cout << " (with Chamber of Bone [Q_SCHAMB])";
 		} else if (i == 7 && activeQuests.blind) {
 			std::cout << " (with Halls of the Blind [Q_BLIND])";
 		} else if (i == 8 && activeQuests.zhar) {
