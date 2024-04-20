@@ -56,6 +56,7 @@ add_executable(${BIN_TARGET}
   Source/items.cpp
   Source/level.cpp
   Source/lighting.cpp
+  Source/mapGen/configuration.cpp
   Source/monstdat.cpp
   Source/monster.cpp
   Source/objdat.cpp

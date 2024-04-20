@@ -4,18 +4,7 @@
 
 #include "engine.h"
 #include "analyzer/scannerName.h"
-
-struct Configuration {
-	uint32_t startSeed = 0;
-	uint32_t seedCount = 1;
-	std::string seedFile;
-	Scanners scanner = Scanners::None;
-	bool quiet = false;
-	bool asciiLevels = false;
-	bool exportLevels = false;
-	std::optional<uint32_t> target = std::nullopt;
-	bool verbose = false;
-};
+#include "mapGen/configuration.h"
 
 extern Configuration Config;
 
