@@ -194,7 +194,6 @@ struct GameState {
 
 static void renderSeedTable(const GameState &state)
 {
-
 	time_t startingTime = std::chrono::system_clock::to_time_t(std::chrono::time_point<std::chrono::system_clock>(std::chrono::seconds(state.startingSeed)));
 	std::cout << "Game seed: " << state.startingSeed << " (" << std::put_time(std::gmtime(&startingTime), "%Y-%m-%d %H:%M:%S");
 	if (315532800 <= state.startingSeed && state.startingSeed <= 2177452799U) {
@@ -230,11 +229,9 @@ static void renderSeedTable(const GameState &state)
 		} else if (i == 5) {
 			if (activeQuests.blood && activeQuests.rock) {
 				std::cout << " (with Arkaine's Valor and The Magic Rock [Q_BLOOD && Q_ROCK])";
-			} else
-			if (activeQuests.blood) {
+			} else if (activeQuests.blood) {
 				std::cout << " (with Arkaine's Valor [Q_BLOOD])";
-			} else
-			if (activeQuests.rock) {
+			} else if (activeQuests.rock) {
 				std::cout << " (with The Magic Rock [Q_ROCK])";
 			}
 		} else if (i == 7 && activeQuests.blind) {
