@@ -23,7 +23,7 @@ void monster_some_crypt();
 #endif
 void PlaceGroup(int mtype, int num, int leaderf, int leader);
 void InitMonsters();
-void SetMapMonsters(BYTE *pMap, int startx, int starty);
+void SetMapMonsters(const BYTE *pMap, int startx, int starty);
 void DeleteMonster(int i);
 int AddMonster(int x, int y, int dir, int mtype, BOOL InMap);
 #ifdef HELLFIRE

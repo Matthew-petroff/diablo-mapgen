@@ -18,6 +18,7 @@
 #include "analyzer/scannerName.h"
 #include "analyzer/stairs.h"
 #include "analyzer/warp.h"
+#include "asset/globalcache.h"
 #include "drlg_l1.h"
 #include "drlg_l2.h"
 #include "drlg_l3.h"
@@ -54,8 +55,7 @@ void InitEngine()
 	gnDifficulty = DIFF_NORMAL;
 	leveltype = DTYPE_NONE;
 
-	DRLG_PreLoadL2SP();
-	DRLG_PreLoadDiabQuads();
+	asset::GlobalCache::Get().LoadAssets();
 
 	if (Config.scanner == Scanners::None) {
 		scanner = new Scanner();
@@ -78,8 +78,7 @@ void InitEngine()
 
 void ShutDownEngine()
 {
-	DRLG_UnloadL2SP();
-	DRLG_FreeDiabQuads();
+	asset::GlobalCache::Get().UnloadAssets();
 	delete scanner;
 }
 

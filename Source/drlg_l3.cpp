@@ -2755,10 +2755,10 @@ std::optional<uint32_t> CreateL3Dungeon(DWORD rseed, int entry, DungeonMode mode
 	return levelSeed;
 }
 
-void LoadL3Dungeon(const char *sFileName, int vx, int vy)
+void LoadL3Dungeon(const BYTE *pLevelMap, int vx, int vy)
 {
 	int i, j, rw, rh;
-	BYTE *pLevelMap, *lm;
+	const BYTE *lm;
 
 	InitL3Dungeon();
 	dminx = 16;
@@ -2766,7 +2766,6 @@ void LoadL3Dungeon(const char *sFileName, int vx, int vy)
 	dmaxx = 96;
 	dmaxy = 96;
 	DRLG_InitTrans();
-	pLevelMap = LoadFileInMem(sFileName, NULL);
 
 	lm = pLevelMap;
 	rw = *lm;
@@ -2813,18 +2812,15 @@ void LoadL3Dungeon(const char *sFileName, int vx, int vy)
 			}
 		}
 	}
-
-	mem_free_dbg(pLevelMap);
 }
 
-void LoadPreL3Dungeon(const char *sFileName, int vx, int vy)
+void LoadPreL3Dungeon(const BYTE *pLevelMap, int vx, int vy)
 {
 	int i, j, rw, rh;
-	BYTE *pLevelMap, *lm;
+	const BYTE *lm;
 
 	InitL3Dungeon();
 	DRLG_InitTrans();
-	pLevelMap = LoadFileInMem(sFileName, NULL);
 
 	lm = pLevelMap;
 	rw = *lm;
@@ -2851,6 +2847,5 @@ void LoadPreL3Dungeon(const char *sFileName, int vx, int vy)
 	}
 
 	memcpy(pdungeon, dungeon, sizeof(pdungeon));
-	mem_free_dbg(pLevelMap);
 }
 #endif

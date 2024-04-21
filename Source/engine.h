@@ -111,7 +111,3 @@ BYTE *DiabloAllocPtr(DWORD dwBytes);
 void mem_free_dbg(void *p);
 BYTE *LoadFileInMem(std::string pszName, DWORD *pdwFileLen);
 void LoadLvlGFX();
-
-void SetMapObjects(BYTE *pMap, int startx, int starty);
-
-void SetMapMonsters(BYTE *pMap, int startx, int starty);
