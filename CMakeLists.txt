@@ -63,7 +63,6 @@ add_executable(${BIN_TARGET}
   Source/objects.cpp
   Source/path.cpp
   Source/quests.cpp
-  Source/setmaps.cpp
   Source/spelldat.cpp
   #Source/stores.cpp
   Source/themes.cpp

@@ -663,6 +663,22 @@ void AddChestTraps()
 	}
 }
 
+static int ObjIndex(int x, int y)
+{
+	int i;
+	int oi;
+
+	for (i = 0; i < nobjects; i++) {
+		oi = objectactive[i];
+		if (object[oi]._ox == x && object[oi]._oy == y)
+			return oi;
+	}
+	char msg[200];
+	snprintf(msg, 200, "ObjIndex: Active object not found at (%d,%d)", x, y);
+	app_fatal(msg);
+	return -1;
+}
+
 void LoadMapObjects(BYTE *pMap, int startx, int starty, int x1, int y1, int w, int h, int leveridx)
 {
 	int rw, rh, i, j, oi, type;

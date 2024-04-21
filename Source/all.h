@@ -21,7 +21,6 @@
 #include "monster.h"
 #include "objdat.h"
 #include "objects.h"
-#include "setmaps.h"
 #include "spelldat.h"
 #include "themes.h"
 #include "trigs.h"
