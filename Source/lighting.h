@@ -22,9 +22,6 @@ extern BOOL lightflag;
 void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum);
 void DoUnVision(int nXPos, int nYPos, int nRadius);
 void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible);
-void FreeLightTable();
-void InitLightTable();
-void MakeLightTable();
 #ifdef _DEBUG
 void ToggleLighting_2();
 void ToggleLighting();
