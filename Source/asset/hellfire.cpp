@@ -1,14 +1,15 @@
 #include "hellfire.h"
 
+#include "cacheconfig.h"
 #include "hellfire/nlevels.h"
 
 namespace asset {
 
-Hellfire Hellfire::LoadAssets()
+Hellfire Hellfire::LoadAssets(const CacheConfig& config)
 {
 	Hellfire archive;
 
-	archive.nlevels = hellfire::NLevels::LoadDirectory();
+	archive.nlevels = hellfire::NLevels::LoadDirectory(config);
 
 	return archive;
 }

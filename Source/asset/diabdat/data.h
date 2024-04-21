@@ -3,6 +3,7 @@
 #include <string_view>
 
 #include "../asset.h"
+#include "../cacheconfig.h"
 
 namespace asset {
 namespace diabdat {
@@ -12,7 +13,7 @@ struct Data {
 	Asset textBox2_cel;
 	Asset textSlid_cel;
 
-	static Data LoadDirectory();
+	static Data LoadDirectory(const CacheConfig& config);
 	void UnloadDirectory();
 
 private:

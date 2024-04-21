@@ -9,7 +9,7 @@ namespace asset {
 
 class Asset {
 public:
-	constexpr Asset() = default;
+	constexpr Asset() : pData(nullptr), dwSize(0) {}
 	~Asset();
 
 	// Assets should never be copied.

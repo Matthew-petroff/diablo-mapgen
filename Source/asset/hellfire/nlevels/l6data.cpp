@@ -4,12 +4,13 @@
 #include <string_view>
 
 #include "../../asset.h"
+#include "../../cacheconfig.h"
 
 namespace asset {
 namespace hellfire {
 namespace nlevels {
 
-L6Data L6Data::LoadDirectory()
+L6Data L6Data::LoadDirectory(const CacheConfig& config)
 {
 	L6Data dir;
 

@@ -1,5 +1,6 @@
 #include "globalcache.h"
 
+#include "cacheconfig.h"
 #include "diabdat.h"
 #include "hellfire.h"
 
@@ -12,20 +13,18 @@ GlobalCache& GlobalCache::Get()
 	return cache;
 }
 
-void GlobalCache::LoadAssets()
+void GlobalCache::LoadAssets(const CacheConfig& config)
 {
-	diabdat = Diabdat::LoadAssets();
-#ifdef HELLFIRE
-	hellfire = Hellfire::LoadAssets();
-#endif
+	diabdat = Diabdat::LoadAssets(config);
+	if (config.retailMode == RetailMode::Hellfire) {
+		hellfire = Hellfire::LoadAssets(config);
+	}
 }
 
 void GlobalCache::UnloadAssets()
 {
 	diabdat.UnloadAssets();
-#ifdef HELLFIRE
 	hellfire.UnloadAssets();
-#endif
 }
 
 }  // namespace asset

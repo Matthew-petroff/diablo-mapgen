@@ -4,11 +4,12 @@
 #include <string_view>
 
 #include "../asset.h"
+#include "../cacheconfig.h"
 
 namespace asset {
 namespace diabdat {
 
-Data Data::LoadDirectory()
+Data Data::LoadDirectory(const CacheConfig& config)
 {
 	Data dir;
 

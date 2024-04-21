@@ -1,18 +1,22 @@
 #include "diabdat.h"
 
+#include "cacheconfig.h"
 #include "diabdat/data.h"
 #include "diabdat/levels.h"
 #include "diabdat/plrgfx.h"
 
 namespace asset {
 
-Diabdat Diabdat::LoadAssets()
+Diabdat Diabdat::LoadAssets(const CacheConfig& config)
 {
 	Diabdat archive;
 
-	archive.data = diabdat::Data::LoadDirectory();
-	archive.levels = diabdat::Levels::LoadDirectory();
-	archive.plrGfx = diabdat::PlrGfx::LoadDirectory();
+	archive.levels = diabdat::Levels::LoadDirectory(config);
+
+	if (!config.ignoreUnusedAssets) {
+		archive.data = diabdat::Data::LoadDirectory(config);
+		archive.plrGfx = diabdat::PlrGfx::LoadDirectory(config);
+	}
 
 	return archive;
 }

@@ -3,6 +3,7 @@
 #include <string_view>
 
 #include "../../asset.h"
+#include "../../cacheconfig.h"
 
 namespace asset {
 namespace hellfire {
@@ -13,7 +14,7 @@ struct L5Data {
 	Asset l5_sol;
 	Asset l5_til;
 
-	static L5Data LoadDirectory();
+	static L5Data LoadDirectory(const CacheConfig& config);
 	void UnloadDirectory();
 
 private:

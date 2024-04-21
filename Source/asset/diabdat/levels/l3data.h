@@ -3,19 +3,27 @@
 #include <string_view>
 
 #include "../../asset.h"
+#include "../../cacheconfig.h"
 
 namespace asset {
 namespace diabdat {
 namespace levels {
 
 struct L3Data {
-	Asset anvil_dun;
-	Asset foulwatr_dun;
+	// Required assets
 	Asset l3_min;
 	Asset l3_sol;
 	Asset l3_til;
 
-	static L3Data LoadDirectory();
+	// Single-player assets
+	Asset anvil_dun;
+
+	// This file is only ever used by setmaps.cpp:LoadSetMap(), which is
+	// never called. This member is only defined to remove the usage of
+	// LoadFileInMem.
+	Asset foulwatr_dun;
+
+	static L3Data LoadDirectory(const CacheConfig& config);
 	void UnloadDirectory();
 
 private:

@@ -1,5 +1,6 @@
 #include "nlevels.h"
 
+#include "../cacheconfig.h"
 #include "nlevels/l5data.h"
 #include "nlevels/l6data.h"
 #include "nlevels/towndata.h"
@@ -7,13 +8,16 @@
 namespace asset {
 namespace hellfire {
 
-NLevels NLevels::LoadDirectory()
+NLevels NLevels::LoadDirectory(const CacheConfig& config)
 {
 	NLevels dir;
 
-	dir.l5data = nlevels::L5Data::LoadDirectory();
-	dir.l6data = nlevels::L6Data::LoadDirectory();
-	dir.townData = nlevels::TownData::LoadDirectory();
+	dir.l5data = nlevels::L5Data::LoadDirectory(config);
+	dir.l6data = nlevels::L6Data::LoadDirectory(config);
+
+	if (!config.ignoreUnusedAssets) {
+		dir.townData = nlevels::TownData::LoadDirectory(config);
+	}
 
 	return dir;
 }

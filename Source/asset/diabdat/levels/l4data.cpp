@@ -4,12 +4,13 @@
 #include <string_view>
 
 #include "../../asset.h"
+#include "../../cacheconfig.h"
 
 namespace asset {
 namespace diabdat {
 namespace levels {
 
-L4Data L4Data::LoadDirectory()
+L4Data L4Data::LoadDirectory(const CacheConfig& config)
 {
 	L4Data dir;
 
@@ -23,18 +24,26 @@ L4Data L4Data::LoadDirectory()
 	dir.l4_min = L4Data::LoadFile("L4.MIN");
 	dir.l4_sol = L4Data::LoadFile("L4.SOL");
 	dir.l4_til = L4Data::LoadFile("L4.TIL");
-	dir.vile1_dun = L4Data::LoadFile("Vile1.DUN");
-	dir.warlord_dun = L4Data::LoadFile("Warlord.DUN");
-	dir.warlord2_dun = L4Data::LoadFile("Warlord2.DUN");
+
+	if (config.gameMode == GameMode::SinglePlayer) {
+		dir.warlord_dun = L4Data::LoadFile("Warlord.DUN");
+		if (!config.ignoreUnusedAssets) {
+			dir.warlord2_dun = L4Data::LoadFile("Warlord2.DUN");
+		}
+	} else if (config.gameMode == GameMode::Multiplayer) {
+		dir.vile1_dun = L4Data::LoadFile("Vile1.DUN");
+	}
 
 	return dir;
 }
 
 void L4Data::UnloadDirectory()
 {
+	vile1_dun.UnloadFile();
+
 	warlord2_dun.UnloadFile();
 	warlord_dun.UnloadFile();
-	vile1_dun.UnloadFile();
+
 	l4_til.UnloadFile();
 	l4_sol.UnloadFile();
 	l4_min.UnloadFile();

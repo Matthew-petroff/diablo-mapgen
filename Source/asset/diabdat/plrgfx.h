@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../asset.h"
+#include "../cacheconfig.h"
 
 namespace asset {
 namespace diabdat {
@@ -9,7 +10,7 @@ struct PlrGfx {
 	Asset infra_trn;
 	Asset stone_trn;
 
-	static PlrGfx LoadDirectory();
+	static PlrGfx LoadDirectory(const CacheConfig& config);
 	void UnloadDirectory();
 
 private:

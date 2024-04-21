@@ -3,12 +3,14 @@
 #include <string_view>
 
 #include "../../asset.h"
+#include "../../cacheconfig.h"
 
 namespace asset {
 namespace diabdat {
 namespace levels {
 
 struct L4Data {
+	// Required assets
 	Asset diab1_dun;
 	Asset diab2a_dun;
 	Asset diab2b_dun;
@@ -19,11 +21,17 @@ struct L4Data {
 	Asset l4_min;
 	Asset l4_sol;
 	Asset l4_til;
-	Asset vile1_dun;
+
+	// Single-player assets
 	Asset warlord_dun;
+
+	// Asset irrelevant for map generation
 	Asset warlord2_dun;
 
-	static L4Data LoadDirectory();
+	// Multiplayer
+	Asset vile1_dun;
+
+	static L4Data LoadDirectory(const CacheConfig& config);
 	void UnloadDirectory();
 
 private:

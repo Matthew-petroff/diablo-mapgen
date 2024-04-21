@@ -3,17 +3,16 @@
 #include <string_view>
 
 #include "../../asset.h"
+#include "../../cacheconfig.h"
 
 namespace asset {
 namespace diabdat {
 namespace levels {
 
 struct TownData {
-	Asset town_min;
 	Asset town_sol;
-	Asset town_til;
 
-	static TownData LoadDirectory();
+	static TownData LoadDirectory(const CacheConfig& config);
 	void UnloadDirectory();
 
 private:

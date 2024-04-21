@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cacheconfig.h"
 #include "diabdat.h"
 #include "hellfire.h"
 
@@ -11,13 +12,11 @@ private:
 
 public:
 	Diabdat diabdat;
-#ifdef HELLFIRE
 	Hellfire hellfire;
-#endif
 
 	static GlobalCache& Get();
 
-	void LoadAssets();
+	void LoadAssets(const CacheConfig& config);
 	void UnloadAssets();
 };
 

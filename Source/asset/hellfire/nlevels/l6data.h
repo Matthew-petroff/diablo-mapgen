@@ -3,6 +3,7 @@
 #include <string_view>
 
 #include "../../asset.h"
+#include "../../cacheconfig.h"
 
 namespace asset {
 namespace hellfire {
@@ -13,7 +14,7 @@ struct L6Data {
 	Asset l6_sol;
 	Asset l6_til;
 
-	static L6Data LoadDirectory();
+	static L6Data LoadDirectory(const CacheConfig& config);
 	void UnloadDirectory();
 
 private:

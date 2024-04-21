@@ -4,11 +4,12 @@
 #include <string_view>
 
 #include "../asset.h"
+#include "../cacheconfig.h"
 
 namespace asset {
 namespace diabdat {
 
-PlrGfx PlrGfx::LoadDirectory()
+PlrGfx PlrGfx::LoadDirectory(const CacheConfig& config)
 {
 	PlrGfx dir;
 
