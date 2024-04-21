@@ -5,6 +5,8 @@
  */
 #include "all.h"
 
+#include "asset/globalcache.h"
+
 /** Contains the tile IDs of the map. */
 BYTE dungeon[DMAXX][DMAXY];
 /** Contains a backup of the tile IDs of the map. */
@@ -19,13 +21,13 @@ int setpc_w;
 /** Specifies the height of the active set level of the map. */
 int setpc_h;
 /** Contains the contents of the single player quest DUN file. */
-BYTE *pSetPiece;
+const BYTE *pSetPiece;
 /** Specifies whether a single player quest DUN has been loaded. */
 BOOL setloadflag;
-BYTE *pSpecialCels;
+const BYTE *pSpecialCels;
 /** Specifies the tile definitions of the active dungeon type; (e.g. levels/l1data/l1.til). */
-BYTE *pMegaTiles;
-BYTE *pLevelPieces;
+const BYTE *pMegaTiles;
+const BYTE *pLevelPieces;
 BYTE *pDungeonCels;
 BYTE *pSpeedCels;
 /**
@@ -157,7 +159,8 @@ void FillSolidBlockTbls()
 {
 	BYTE bv;
 	DWORD dwTiles;
-	BYTE *pSBFile, *pTmp;
+	const BYTE *pSBFile;
+	const BYTE *pTmp;
 	int i;
 
 	memset(nBlockTable, 0, sizeof(nBlockTable));
@@ -165,40 +168,55 @@ void FillSolidBlockTbls()
 	memset(nTransTable, 0, sizeof(nTransTable));
 	memset(nMissileTable, 0, sizeof(nMissileTable));
 	memset(nTrapTable, 0, sizeof(nTrapTable));
-
+#ifdef HELLFIRE
+	auto& nlevelsCache = asset::GlobalCache::GetGlobal().hellfire.nlevels;
+#endif
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
 	switch (leveltype) {
 	case DTYPE_TOWN:
 #ifdef HELLFIRE
-		pSBFile = LoadFileInMem("NLevels\\TownData\\Town.SOL", &dwTiles);
+		pSBFile = nlevelsCache.townData.town_sol.GetData();
+		dwTiles = nlevelsCache.townData.town_sol.GetSize();
 #else
-		pSBFile = LoadFileInMem("Levels\\TownData\\Town.SOL", &dwTiles);
+		pSBFile = levelsCache.townData.town_sol.GetData();
+		dwTiles = levelsCache.townData.town_sol.GetSize();
 #endif
 		break;
 	case DTYPE_CATHEDRAL:
 #ifdef HELLFIRE
-		if (currlevel < 17)
-			pSBFile = LoadFileInMem("Levels\\L1Data\\L1.SOL", &dwTiles);
-		else
-			pSBFile = LoadFileInMem("NLevels\\L5Data\\L5.SOL", &dwTiles);
+		if (currlevel < 17) {
+			pSBFile = nlevelsCache.l1data.l1_sol.GetData();
+			dwTiles = nlevelsCache.l1data.l1_sol.GetSize();
+		} else {
+			pSBFile = nlevelsCache.l5data.l5_sol.GetData();
+			dwTiles = nlevelsCache.l5data.l5_sol.GetSize();
+		}
 #else
-		pSBFile = LoadFileInMem("Levels\\L1Data\\L1.SOL", &dwTiles);
+		pSBFile = levelsCache.l1data.l1_sol.GetData();
+		dwTiles = levelsCache.l1data.l1_sol.GetSize();
 #endif
 		break;
 	case DTYPE_CATACOMBS:
-		pSBFile = LoadFileInMem("Levels\\L2Data\\L2.SOL", &dwTiles);
+		pSBFile = levelsCache.l2data.l2_sol.GetData();
+		dwTiles = levelsCache.l2data.l2_sol.GetSize();
 		break;
 	case DTYPE_CAVES:
 #ifdef HELLFIRE
-		if (currlevel < 17)
-			pSBFile = LoadFileInMem("Levels\\L3Data\\L3.SOL", &dwTiles);
-		else
-			pSBFile = LoadFileInMem("NLevels\\L6Data\\L6.SOL", &dwTiles);
+		if (currlevel < 17) {
+			pSBFile = levelsCache.l3data.l3_sol.GetData();
+			dwTiles = levelsCache.l3data.l3_sol.GetSize();
+		} else {
+			pSBFile = nlevelsCache.l6data.l6_sol.GetData();
+			dwTiles = nlevelsCache.l6data.l6_sol.GetSize();
+		}
 #else
-		pSBFile = LoadFileInMem("Levels\\L3Data\\L3.SOL", &dwTiles);
+		pSBFile = levelsCache.l3data.l3_sol.GetData();
+		dwTiles = levelsCache.l3data.l3_sol.GetSize();
 #endif
 		break;
 	case DTYPE_HELL:
-		pSBFile = LoadFileInMem("Levels\\L4Data\\L4.SOL", &dwTiles);
+		pSBFile = levelsCache.l4data.l4_sol.GetData();
+		dwTiles = levelsCache.l4data.l4_sol.GetSize();
 		break;
 	default:
 		app_fatal("FillSolidBlockTbls");
@@ -220,8 +238,6 @@ void FillSolidBlockTbls()
 			nTrapTable[i] = TRUE;
 		block_lvid[i] = (bv & 0x70) >> 4; /* beta: (bv >> 4) & 7 */
 	}
-
-	mem_free_dbg(pSBFile);
 }
 
 static void SwapTile(int f1, int f2)

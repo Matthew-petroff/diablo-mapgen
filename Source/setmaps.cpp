@@ -4,6 +4,7 @@
  * Implementation of functionality the special quest dungeons.
  */
 #include "all.h"
+#include "asset/globalcache.h"
 
 // BUGFIX: constant data should be const
 BYTE SkelKingTrans1[] = {
@@ -109,15 +110,13 @@ void AddVileObjs()
 	SetObjMapRange(ObjIndex(35, 36), 7, 11, 13, 18, 3);
 }
 
-void DRLG_SetMapTrans(const char *sFileName)
+void DRLG_SetMapTrans(const BYTE *pLevelMap)
 {
 	int x, y;
 	int i, j;
-	BYTE *pLevelMap;
-	BYTE *d;
+	const BYTE *d;
 	DWORD dwOffset;
 
-	pLevelMap = LoadFileInMem(sFileName, NULL);
 	d = pLevelMap + 2;
 	x = pLevelMap[0];
 	y = *d;
@@ -133,7 +132,6 @@ void DRLG_SetMapTrans(const char *sFileName)
 			d += 2;
 		}
 	}
-	mem_free_dbg(pLevelMap);
 }
 
 /**
@@ -141,14 +139,15 @@ void DRLG_SetMapTrans(const char *sFileName)
  */
 void LoadSetMap()
 {
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
 	switch (setlvlnum) {
 	case SL_SKELKING:
 		if (quests[Q_SKELKING]._qactive == QUEST_INIT) {
 			quests[Q_SKELKING]._qactive = QUEST_ACTIVE;
 			quests[Q_SKELKING]._qvar1 = 1;
 		}
-		LoadPreL1Dungeon("Levels\\L1Data\\SklKng1.DUN", 83, 45);
-		LoadL1Dungeon("Levels\\L1Data\\SklKng2.DUN", 83, 45);
+		LoadPreL1Dungeon(levelsCache.l1data.sklKng1_dun.GetData(), 83, 45);
+		LoadL1Dungeon(levelsCache.l1data.sklKng2_dun.GetData(), 83, 45);
 		DRLG_AreaTrans(sizeof(SkelKingTrans1) / 4, &SkelKingTrans1[0]);
 		DRLG_ListTrans(sizeof(SkelKingTrans2) / 4, &SkelKingTrans2[0]);
 		DRLG_AreaTrans(sizeof(SkelKingTrans3) / 4, &SkelKingTrans3[0]);
@@ -158,8 +157,8 @@ void LoadSetMap()
 		InitSKingTriggers();
 		break;
 	case SL_BONECHAMB:
-		LoadPreL2Dungeon("Levels\\L2Data\\Bonecha2.DUN", 69, 39);
-		LoadL2Dungeon("Levels\\L2Data\\Bonecha1.DUN", 69, 39);
+		LoadPreL2Dungeon(levelsCache.l2data.bonecha2_dun.GetData(), 69, 39);
+		LoadL2Dungeon(levelsCache.l2data.bonecha1_dun.GetData(), 69, 39);
 		DRLG_ListTrans(sizeof(SkelChamTrans1) / 4, &SkelChamTrans1[0]);
 		DRLG_AreaTrans(sizeof(SkelChamTrans2) / 4, &SkelChamTrans2[0]);
 		DRLG_ListTrans(sizeof(SkelChamTrans3) / 4, &SkelChamTrans3[0]);
@@ -168,16 +167,16 @@ void LoadSetMap()
 		InitSChambTriggers();
 		break;
 	case SL_MAZE:
-		LoadPreL1Dungeon("Levels\\L1Data\\Lv1MazeA.DUN", 20, 50);
-		LoadL1Dungeon("Levels\\L1Data\\Lv1MazeB.DUN", 20, 50);
+		LoadPreL1Dungeon(levelsCache.l1data.lv1MazeA_dun.GetData(), 20, 50);
+		LoadL1Dungeon(levelsCache.l1data.lv1MazeB_dun.GetData(), 20, 50);
 		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
-		DRLG_SetMapTrans("Levels\\L1Data\\Lv1MazeA.DUN");
+		DRLG_SetMapTrans(levelsCache.l1data.lv1MazeA_dun.GetData());
 		break;
 	case SL_POISONWATER:
 		if (quests[Q_PWATER]._qactive == QUEST_INIT)
 			quests[Q_PWATER]._qactive = QUEST_ACTIVE;
-		LoadPreL3Dungeon("Levels\\L3Data\\Foulwatr.DUN", 19, 50);
-		LoadL3Dungeon("Levels\\L3Data\\Foulwatr.DUN", 20, 50);
+		LoadPreL3Dungeon(levelsCache.l3data.foulwatr_dun.GetData(), 19, 50);
+		LoadL3Dungeon(levelsCache.l3data.foulwatr_dun.GetData(), 20, 50);
 		InitPWaterTriggers();
 		break;
 	case SL_VILEBETRAYER:
@@ -186,11 +185,11 @@ void LoadSetMap()
 		} else if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE) {
 			quests[Q_BETRAYER]._qvar2 = 3;
 		}
-		LoadPreL1Dungeon("Levels\\L1Data\\Vile1.DUN", 35, 36);
-		LoadL1Dungeon("Levels\\L1Data\\Vile2.DUN", 35, 36);
+		LoadPreL1Dungeon(levelsCache.l1data.vile1_dun.GetData(), 35, 36);
+		LoadL1Dungeon(levelsCache.l1data.vile2_dun.GetData(), 35, 36);
 		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
 		AddVileObjs();
-		DRLG_SetMapTrans("Levels\\L1Data\\Vile1.DUN");
+		DRLG_SetMapTrans(levelsCache.l1data.vile1_dun.GetData());
 		InitNoTriggers();
 		break;
 	}

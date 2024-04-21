@@ -5,6 +5,8 @@
  */
 #include "all.h"
 
+#include "asset/globalcache.h"
+
 int diabquad1x;
 int diabquad1y;
 int diabquad2x;
@@ -219,25 +221,26 @@ static void InitL4Dungeon()
 void DRLG_LoadL4SP()
 {
 	setloadflag = FALSE;
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
 	if (QuestStatus(Q_WARLORD)) {
-		pSetPiece = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
+		pSetPiece = levelsCache.l4data.warlord_dun.GetData();
 		setloadflag = TRUE;
 	}
 	if (currlevel == 15 && gbMaxPlayers != 1) {
-		pSetPiece = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
+		pSetPiece = levelsCache.l4data.vile1_dun.GetData();
 		setloadflag = TRUE;
 	}
 }
 
 void DRLG_FreeL4SP()
 {
-	MemFreeDbg(pSetPiece);
+	pSetPiece = nullptr;
 }
 
 void DRLG_L4SetSPRoom(int rx1, int ry1)
 {
 	int rw, rh, i, j;
-	BYTE *sp;
+	const BYTE *sp;
 
 	rw = pSetPiece[0];
 	rh = pSetPiece[2];
@@ -1271,10 +1274,10 @@ void L4SaveQuads()
 	}
 }
 
-void DRLG_L4SetRoom(BYTE *pSetPiece, int rx1, int ry1)
+void DRLG_L4SetRoom(const BYTE *pSetPiece, int rx1, int ry1)
 {
 	int rw, rh, i, j;
-	BYTE *sp;
+	const BYTE *sp;
 
 	rw = pSetPiece[0];
 	rh = pSetPiece[2];
@@ -1293,44 +1296,25 @@ void DRLG_L4SetRoom(BYTE *pSetPiece, int rx1, int ry1)
 	}
 }
 
-BYTE *lpSetPiece1;
-BYTE *lpSetPiece2;
-BYTE *lpSetPiece3;
-BYTE *lpSetPiece4;
-
-void DRLG_PreLoadDiabQuads()
-{
-	lpSetPiece1 = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
-	lpSetPiece2 = LoadFileInMem("Levels\\L4Data\\diab2b.DUN", NULL);
-	lpSetPiece3 = LoadFileInMem("Levels\\L4Data\\diab3b.DUN", NULL);
-	lpSetPiece4 = LoadFileInMem("Levels\\L4Data\\diab4b.DUN", NULL);
-}
-
-void DRLG_FreeDiabQuads()
-{
-	mem_free_dbg(lpSetPiece1);
-	mem_free_dbg(lpSetPiece2);
-	mem_free_dbg(lpSetPiece3);
-	mem_free_dbg(lpSetPiece4);
-}
-
 void DRLG_LoadDiabQuads(BOOL preflag)
 {
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
+
 	diabquad1x = 4 + l4holdx;
 	diabquad1y = 4 + l4holdy;
-	DRLG_L4SetRoom(lpSetPiece1, diabquad1x, diabquad1y);
+	DRLG_L4SetRoom(levelsCache.l4data.diab1_dun.GetData(), diabquad1x, diabquad1y);
 
 	diabquad2x = 27 - l4holdx;
 	diabquad2y = 1 + l4holdy;
-	DRLG_L4SetRoom(lpSetPiece2, diabquad2x, diabquad2y);
+	DRLG_L4SetRoom(levelsCache.l4data.diab2b_dun.GetData(), diabquad2x, diabquad2y);
 
 	diabquad3x = 1 + l4holdx;
 	diabquad3y = 27 - l4holdy;
-	DRLG_L4SetRoom(lpSetPiece3, diabquad3x, diabquad3y);
+	DRLG_L4SetRoom(levelsCache.l4data.diab3b_dun.GetData(), diabquad3x, diabquad3y);
 
 	diabquad4x = 28 - l4holdx;
 	diabquad4y = 28 - l4holdy;
-	DRLG_L4SetRoom(lpSetPiece4, diabquad4x, diabquad4y);
+	DRLG_L4SetRoom(levelsCache.l4data.diab4b_dun.GetData(), diabquad4x, diabquad4y);
 }
 
 static BOOL DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int ldir)

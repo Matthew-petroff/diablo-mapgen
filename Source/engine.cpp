@@ -12,6 +12,7 @@
 #include <unistd.h>
 #endif
 
+#include "asset/globalcache.h"
 #include "engine.h"
 #include "gendung.h"
 
@@ -151,25 +152,26 @@ BYTE *LoadFileInMem(std::string pszName, DWORD *pdwFileLen)
 
 void LoadLvlGFX()
 {
-	free(pMegaTiles);
-	free(pLevelPieces);
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
+	pMegaTiles = nullptr;
+	pLevelPieces = nullptr;
 
 	switch (leveltype) {
 	case DTYPE_CATHEDRAL:
-		pMegaTiles = LoadFileInMem("Levels\\L1Data\\L1.TIL", NULL);
-		pLevelPieces = LoadFileInMem("Levels\\L1Data\\L1.MIN", NULL);
+		pMegaTiles = levelsCache.l1data.l1_til.GetData();
+		pLevelPieces = levelsCache.l1data.l1_min.GetData();
 		return;
 	case DTYPE_CATACOMBS:
-		pMegaTiles = LoadFileInMem("Levels\\L2Data\\L2.TIL", NULL);
-		pLevelPieces = LoadFileInMem("Levels\\L2Data\\L2.MIN", NULL);
+		pMegaTiles = levelsCache.l2data.l2_til.GetData();
+		pLevelPieces = levelsCache.l2data.l2_min.GetData();
 		return;
 	case DTYPE_CAVES:
-		pMegaTiles = LoadFileInMem("Levels\\L3Data\\L3.TIL", NULL);
-		pLevelPieces = LoadFileInMem("Levels\\L3Data\\L3.MIN", NULL);
+		pMegaTiles = levelsCache.l3data.l3_til.GetData();
+		pLevelPieces = levelsCache.l3data.l3_min.GetData();
 		return;
 	case DTYPE_HELL:
-		pMegaTiles = LoadFileInMem("Levels\\L4Data\\L4.TIL", NULL);
-		pLevelPieces = LoadFileInMem("Levels\\L4Data\\L4.MIN", NULL);
+		pMegaTiles = levelsCache.l4data.l4_til.GetData();
+		pLevelPieces = levelsCache.l4data.l4_min.GetData();
 		return;
 	default:
 		app_fatal("LoadLvlGFX");

@@ -50,6 +50,22 @@ add_executable(${BIN_TARGET}
   Source/analyzer/scannerName.cpp
   Source/analyzer/stairs.cpp
   Source/analyzer/warp.cpp
+  Source/asset/asset.cpp
+  Source/asset/globalcache.cpp
+  Source/asset/diabdat.cpp
+  Source/asset/diabdat/data.cpp
+  Source/asset/diabdat/levels.cpp
+  Source/asset/diabdat/levels/l1data.cpp
+  Source/asset/diabdat/levels/l2data.cpp
+  Source/asset/diabdat/levels/l3data.cpp
+  Source/asset/diabdat/levels/l4data.cpp
+  Source/asset/diabdat/levels/towndata.cpp
+  Source/asset/diabdat/plrgfx.cpp
+  Source/asset/hellfire.cpp
+  Source/asset/hellfire/nlevels.cpp
+  Source/asset/hellfire/nlevels/l5data.cpp
+  Source/asset/hellfire/nlevels/l6data.cpp
+  Source/asset/hellfire/nlevels/towndata.cpp
   Source/funkMapGen.cpp
   Source/gendung.cpp
   Source/itemdat.cpp

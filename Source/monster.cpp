@@ -4,6 +4,7 @@
  * Implementation of monster functionality, AI, actions, spawning, loading, etc.
  */
 #include "all.h"
+#include "asset/globalcache.h"
 
 /** Tracks which missile files are already loaded */
 int MissileFileFlag;
@@ -849,7 +850,7 @@ static void PlaceUniques()
 void PlaceQuestMonsters()
 {
 	int skeltype;
-	BYTE *setp;
+	const BYTE *setp;
 
 	if (!setlevel) {
 		if (QuestStatus(Q_BUTCHER)) {
@@ -868,30 +869,26 @@ void PlaceQuestMonsters()
 			PlaceUniqueMonst(UMT_SKELKING, skeltype, 30);
 		}
 
+		auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
 		if (QuestStatus(Q_LTBANNER)) {
-			setp = LoadFileInMem("Levels\\L1Data\\Banner1.DUN", NULL);
+			setp = levelsCache.l1data.banner1_dun.GetData();
 			SetMapMonsters(setp, 2 * setpc_x, 2 * setpc_y);
-			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_BLOOD)) {
-			setp = LoadFileInMem("Levels\\L2Data\\Blood2.DUN", NULL);
+			setp = levelsCache.l2data.blood2_dun.GetData();
 			SetMapMonsters(setp, 2 * setpc_x, 2 * setpc_y);
-			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_BLIND)) {
-			setp = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
+			setp = levelsCache.l2data.blind2_dun.GetData();
 			SetMapMonsters(setp, 2 * setpc_x, 2 * setpc_y);
-			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_ANVIL)) {
-			setp = LoadFileInMem("Levels\\L3Data\\Anvil.DUN", NULL);
+			setp = levelsCache.l3data.anvil_dun.GetData();
 			SetMapMonsters(setp, 2 * setpc_x + 2, 2 * setpc_y + 2);
-			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_WARLORD)) {
-			setp = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
+			setp = levelsCache.l4data.warlord_dun.GetData();
 			SetMapMonsters(setp, 2 * setpc_x, 2 * setpc_y);
-			mem_free_dbg(setp);
 			AddMonsterType(UniqMonst[UMT_WARLORD].mtype, PLACE_SCATTER);
 		}
 		if (QuestStatus(Q_VEIL)) {
@@ -907,9 +904,8 @@ void PlaceQuestMonsters()
 			PlaceUniqueMonst(UMT_LAZURUS, 0, 0);
 			PlaceUniqueMonst(UMT_RED_VEX, 0, 0);
 			PlaceUniqueMonst(UMT_BLACKJADE, 0, 0);
-			setp = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
+			setp = levelsCache.l4data.vile1_dun.GetData();
 			SetMapMonsters(setp, 2 * setpc_x, 2 * setpc_y);
-			mem_free_dbg(setp);
 		}
 #ifdef HELLFIRE
 
@@ -1014,20 +1010,11 @@ void PlaceGroup(int mtype, int num, int leaderf, int leader)
 #ifndef SPAWN
 void LoadDiabMonsts()
 {
-	BYTE *lpSetPiece;
-
-	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * diabquad1x, 2 * diabquad1y);
-	mem_free_dbg(lpSetPiece);
-	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab2a.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * diabquad2x, 2 * diabquad2y);
-	mem_free_dbg(lpSetPiece);
-	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab3a.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * diabquad3x, 2 * diabquad3y);
-	mem_free_dbg(lpSetPiece);
-	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab4a.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * diabquad4x, 2 * diabquad4y);
-	mem_free_dbg(lpSetPiece);
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
+	SetMapMonsters(levelsCache.l4data.diab1_dun.GetData(), 2 * diabquad1x, 2 * diabquad1y);
+	SetMapMonsters(levelsCache.l4data.diab2a_dun.GetData(), 2 * diabquad2x, 2 * diabquad2y);
+	SetMapMonsters(levelsCache.l4data.diab3a_dun.GetData(), 2 * diabquad3x, 2 * diabquad3y);
+	SetMapMonsters(levelsCache.l4data.diab4a_dun.GetData(), 2 * diabquad4x, 2 * diabquad4y);
 }
 #endif
 
@@ -1108,7 +1095,7 @@ void InitMonsters()
 }
 
 #ifndef SPAWN
-void SetMapMonsters(BYTE *pMap, int startx, int starty)
+void SetMapMonsters(const BYTE *pMap, int startx, int starty)
 {
 	WORD rw, rh;
 	WORD *lm;

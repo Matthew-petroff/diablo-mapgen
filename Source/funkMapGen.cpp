@@ -18,6 +18,8 @@
 #include "analyzer/scannerName.h"
 #include "analyzer/stairs.h"
 #include "analyzer/warp.h"
+#include "asset/cacheconfig.h"
+#include "asset/globalcache.h"
 #include "drlg_l1.h"
 #include "drlg_l2.h"
 #include "drlg_l3.h"
@@ -49,13 +51,24 @@ constexpr uint64_t ProgressInterval = 10 * 1000 * 1000;
 BYTE previousLevelType = DTYPE_NONE;
 Scanner *scanner;
 
+static inline constexpr asset::CacheConfig cacheConfig = {
+#if defined(SPAWN)
+	asset::RetailMode::Spawn,
+#elif defined(HELLFIRE)
+	asset::RetailMode::Hellfire,
+#else
+	asset::RetailMode::Retail,
+#endif
+	asset::GameMode::SinglePlayer,
+	/* ignoreUnusedAssets */ false,
+};
+
 void InitEngine()
 {
 	gnDifficulty = DIFF_NORMAL;
 	leveltype = DTYPE_NONE;
 
-	DRLG_PreLoadL2SP();
-	DRLG_PreLoadDiabQuads();
+	asset::GlobalCache::Get().LoadAssets(cacheConfig);
 
 	if (Config.scanner == Scanners::None) {
 		scanner = new Scanner();
@@ -78,8 +91,7 @@ void InitEngine()
 
 void ShutDownEngine()
 {
-	DRLG_UnloadL2SP();
-	DRLG_FreeDiabQuads();
+	asset::GlobalCache::Get().UnloadAssets();
 	delete scanner;
 }
 

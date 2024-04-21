@@ -5,13 +5,15 @@
  */
 #include "all.h"
 
+#include "asset/globalcache.h"
+
 int stextup;
 int storenumh;
 int stextlhold;
 ItemStruct boyitem;
 int stextshold;
 ItemStruct premiumitem[SMITH_PREMIUM_ITEMS];
-BYTE *pSTextBoxCels;
+const BYTE *pSTextBoxCels;
 int premiumlevel;
 int talker;
 STextStruct stext[STORE_LINES];
@@ -27,12 +29,12 @@ int numpremium;
 ItemStruct healitem[20];
 ItemStruct golditem;
 char storehidx[48];
-BYTE *pSTextSlidCels;
+const BYTE *pSTextSlidCels;
 int stextvhold;
 int stextsel;
 char stextscrldbtn;
 int gossipend;
-BYTE *pSPentSpn2Cels;
+const BYTE *pSPentSpn2Cels;
 int stextsval;
 int boylevel;
 ItemStruct smithitem[SMITH_ITEMS];
@@ -83,9 +85,10 @@ void InitStores()
 {
 	int i;
 
-	pSTextBoxCels = LoadFileInMem("Data\\TextBox2.CEL", NULL);
-	pSPentSpn2Cels = LoadFileInMem("Data\\PentSpn2.CEL", NULL);
-	pSTextSlidCels = LoadFileInMem("Data\\TextSlid.CEL", NULL);
+	auto& dataCache = asset::GlobalCache::Get().diabdat.data;
+	pSTextBoxCels = dataCache.textBox2_cel.GetData();
+	pSPentSpn2Cels = dataCache.pentSpn2_cel.GetData();
+	pSTextSlidCels = dataCache.textSlid_cel.GetData();
 	ClearSText(0, STORE_LINES);
 	stextflag = STORE_NONE;
 	InStoreFlag = 1;
@@ -134,9 +137,9 @@ void SetupTownStores()
 
 void FreeStoreMem()
 {
-	MemFreeDbg(pSTextBoxCels);
-	MemFreeDbg(pSPentSpn2Cels);
-	MemFreeDbg(pSTextSlidCels);
+	pSTextBoxCels = nullptr;
+	pSPentSpn2Cels = nullptr;
+	pSTextSlidCels = nullptr;
 }
 
 void DrawSTextBack()

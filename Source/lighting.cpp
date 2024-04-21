@@ -5,6 +5,8 @@
  */
 #include "all.h"
 
+#include "asset/globalcache.h"
+
 LightListStruct VisionList[MAXVISION];
 BYTE lightactive[MAXLIGHTS];
 LightListStruct LightList[MAXLIGHTS];
@@ -678,7 +680,8 @@ void MakeLightTable()
 	int i, j, k, l, lights, shade, l1, l2, cnt, rem, div;
 	double fs, fa;
 	BYTE col, max;
-	BYTE *tbl, *trn;
+	BYTE *tbl;
+	const BYTE *trn;
 	BYTE blood[16];
 
 	tbl = pLightTbl;
@@ -804,17 +807,16 @@ void MakeLightTable()
 	}
 #endif
 
-	trn = LoadFileInMem("PlrGFX\\Infra.TRN", NULL);
+	auto& plrGfxCache = asset::GlobalCache::Get().diabdat.plrGfx;
+	trn = plrGfxCache.infra_trn.GetData();
 	for (i = 0; i < 256; i++) {
 		*tbl++ = trn[i];
 	}
-	mem_free_dbg(trn);
 
-	trn = LoadFileInMem("PlrGFX\\Stone.TRN", NULL);
+	trn = plrGfxCache.stone_trn.GetData();
 	for (i = 0; i < 256; i++) {
 		*tbl++ = trn[i];
 	}
-	mem_free_dbg(trn);
 
 	for (i = 0; i < 8; i++) {
 		for (col = 226; col < 239; col++) {

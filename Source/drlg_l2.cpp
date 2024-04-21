@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+#include "asset/globalcache.h"
+
 int nSx1;
 int nSy1;
 int nSx2;
@@ -1866,34 +1868,17 @@ void InitDungeon()
 	}
 }
 
-BYTE *pSetPiece1;
-BYTE *pSetPiece2;
-BYTE *pSetPiece3;
-
-void DRLG_PreLoadL2SP()
-{
-	pSetPiece1 = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
-	pSetPiece2 = LoadFileInMem("Levels\\L2Data\\Blood1.DUN", NULL);
-	pSetPiece3 = LoadFileInMem("Levels\\L2Data\\Bonestr2.DUN", NULL);
-}
-
-void DRLG_UnloadL2SP()
-{
-	MemFreeDbg(pSetPiece1);
-	MemFreeDbg(pSetPiece2);
-	MemFreeDbg(pSetPiece3);
-}
-
 static void DRLG_LoadL2SP()
 {
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
 	if (QuestStatus(Q_BLIND)) {
-		pSetPiece = pSetPiece1;
+		pSetPiece = levelsCache.l2data.blind2_dun.GetData();
 		setloadflag = TRUE;
 	} else if (QuestStatus(Q_BLOOD)) {
-		pSetPiece = pSetPiece2;
+		pSetPiece = levelsCache.l2data.blood1_dun.GetData();
 		setloadflag = TRUE;
 	} else if (QuestStatus(Q_SCHAMB)) {
-		pSetPiece = pSetPiece3;
+		pSetPiece = levelsCache.l2data.bonestr2_dun.GetData();
 		setloadflag = TRUE;
 	} else
 		setloadflag = FALSE;
@@ -1907,7 +1892,7 @@ static void DRLG_FreeL2SP()
 static void DRLG_L2SetRoom(int rx1, int ry1)
 {
 	int rw, rh, i, j;
-	BYTE *sp;
+	const BYTE *sp;
 
 	rw = pSetPiece[0];
 	rh = pSetPiece[2];
@@ -3413,14 +3398,13 @@ static void DRLG_InitL2Vals()
 	}
 }
 
-void LoadL2Dungeon(const char *sFileName, int vx, int vy)
+void LoadL2Dungeon(const BYTE *pLevelMap, int vx, int vy)
 {
 	int i, j, rw, rh, pc;
-	BYTE *pLevelMap, *lm;
+	const BYTE *lm;
 
 	InitDungeon();
 	DRLG_InitTrans();
-	pLevelMap = LoadFileInMem(sFileName, NULL);
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
@@ -3461,17 +3445,15 @@ void LoadL2Dungeon(const char *sFileName, int vx, int vy)
 	ViewY = vy;
 	SetMapMonsters(pLevelMap, 0, 0);
 	SetMapObjects(pLevelMap, 0, 0);
-	mem_free_dbg(pLevelMap);
 }
 
-void LoadPreL2Dungeon(const char *sFileName, int vx, int vy)
+void LoadPreL2Dungeon(const BYTE *pLevelMap, int vx, int vy)
 {
 	int i, j, rw, rh;
-	BYTE *pLevelMap, *lm;
+	const BYTE *lm;
 
 	InitDungeon();
 	DRLG_InitTrans();
-	pLevelMap = LoadFileInMem(sFileName, NULL);
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
@@ -3509,8 +3491,6 @@ void LoadPreL2Dungeon(const char *sFileName, int vx, int vy)
 			pdungeon[i][j] = GetDungeon(i, j);
 		}
 	}
-
-	mem_free_dbg(pLevelMap);
 }
 
 std::optional<uint32_t> CreateL2Dungeon(DWORD rseed, int entry, DungeonMode mode)

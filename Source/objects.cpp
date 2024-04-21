@@ -5,6 +5,8 @@
  */
 #include "all.h"
 
+#include "asset/globalcache.h"
+
 int trapid;
 int trapdir;
 BYTE *pObjCels[40];
@@ -663,10 +665,10 @@ void AddChestTraps()
 	}
 }
 
-void LoadMapObjects(BYTE *pMap, int startx, int starty, int x1, int y1, int w, int h, int leveridx)
+void LoadMapObjects(const BYTE *pMap, int startx, int starty, int x1, int y1, int w, int h, int leveridx)
 {
 	int rw, rh, i, j, oi, type;
-	BYTE *lm;
+	const BYTE *lm;
 	long mapoff;
 
 	InitObjFlag = TRUE;
@@ -695,11 +697,11 @@ void LoadMapObjects(BYTE *pMap, int startx, int starty, int x1, int y1, int w, i
 	InitObjFlag = FALSE;
 }
 
-void LoadMapObjs(BYTE *pMap, int startx, int starty)
+void LoadMapObjs(const BYTE *pMap, int startx, int starty)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *lm;
+	const BYTE *lm;
 	long mapoff;
 
 	InitObjFlag = TRUE;
@@ -726,17 +728,10 @@ void LoadMapObjs(BYTE *pMap, int startx, int starty)
 
 void AddDiabObjs()
 {
-	BYTE *lpSetPiece;
-
-	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * diabquad1x, 2 * diabquad1y, diabquad2x, diabquad2y, 11, 12, 1);
-	mem_free_dbg(lpSetPiece);
-	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab2a.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * diabquad2x, 2 * diabquad2y, diabquad3x, diabquad3y, 11, 11, 2);
-	mem_free_dbg(lpSetPiece);
-	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab3a.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * diabquad3x, 2 * diabquad3y, diabquad4x, diabquad4y, 9, 9, 3);
-	mem_free_dbg(lpSetPiece);
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
+	LoadMapObjects(levelsCache.l4data.diab1_dun.GetData(), 2 * diabquad1x, 2 * diabquad1y, diabquad2x, diabquad2y, 11, 12, 1);
+	LoadMapObjects(levelsCache.l4data.diab2a_dun.GetData(), 2 * diabquad2x, 2 * diabquad2y, diabquad3x, diabquad3y, 11, 11, 2);
+	LoadMapObjects(levelsCache.l4data.diab3a_dun.GetData(), 2 * diabquad3x, 2 * diabquad3y, diabquad4x, diabquad4y, 9, 9, 3);
 }
 
 #ifdef HELLFIRE
@@ -945,7 +940,7 @@ void AddLazStand()
 void InitObjects()
 {
 	int sp_id;
-	BYTE *mem;
+	const BYTE *mem;
 
 	ClrAllObjects();
 #ifdef HELLFIRE
@@ -984,6 +979,7 @@ void InitObjects()
 		if (currlevel == 12)
 			AddStoryBooks();
 #endif
+		auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
 		if (leveltype == DTYPE_CATHEDRAL) {
 			if (QuestStatus(Q_BUTCHER))
 				AddTortures();
@@ -1025,10 +1021,9 @@ void InitObjects()
 				}
 				quests[Q_BLIND]._qmsg = sp_id;
 				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc_x, setpc_y, setpc_w + setpc_x + 1, setpc_h + setpc_y + 1, sp_id);
-				mem = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
+				mem = levelsCache.l2data.blind2_dun.GetData();
 				// BUGFIX: should not invoke LoadMapObjs for Blind2.DUN, as Blind2.DUN is missing an objects layer.
 				LoadMapObjs(mem, 2 * setpc_x, 2 * setpc_y);
-				mem_free_dbg(mem);
 			}
 			if (QuestStatus(Q_BLOOD)) {
 				if (plr[myplr]._pClass == PC_WARRIOR) {
@@ -1075,9 +1070,8 @@ void InitObjects()
 				}
 				quests[Q_WARLORD]._qmsg = sp_id;
 				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc_x, setpc_y, setpc_x + setpc_w, setpc_y + setpc_h, sp_id);
-				mem = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
+				mem = levelsCache.l4data.warlord_dun.GetData();
 				LoadMapObjs(mem, 2 * setpc_x, 2 * setpc_y);
-				mem_free_dbg(mem);
 			}
 			if (QuestStatus(Q_BETRAYER) && gbMaxPlayers == 1)
 				AddLazStand();
@@ -1096,11 +1090,12 @@ void InitObjects()
 }
 
 #ifndef SPAWN
-void SetMapObjects(BYTE *pMap, int startx, int starty)
+void SetMapObjects(const BYTE *pMap, int startx, int starty)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *lm, *h;
+	const BYTE *lm;
+	const BYTE *h;
 	long mapoff;
 	int fileload[56];
 	char filestr[32];
@@ -1141,7 +1136,9 @@ void SetMapObjects(BYTE *pMap, int startx, int starty)
 
 		ObjFileList[numobjfiles] = i;
 		sprintf(filestr, "Objects\\%s.CEL", ObjMasterLoadList[i]);
+	#if 0 /* This is part of vanilla code, but this variable isn't used anywhere else. */
 		pObjCels[numobjfiles] = LoadFileInMem(filestr, NULL);
+	#endif
 		numobjfiles++;
 	}
 

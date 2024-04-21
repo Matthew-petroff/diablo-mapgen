@@ -4,6 +4,7 @@
  * Implementation of functionality for handling quests.
  */
 #include "all.h"
+#include "asset/globalcache.h"
 
 int qtopline;
 BOOL questlog;
@@ -198,10 +199,12 @@ void DrawWarLord(int x, int y)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *sp, *setp;
+	const BYTE *sp;
+	const BYTE *setp;
 	int v;
 
-	setp = LoadFileInMem("Levels\\L4Data\\Warlord2.DUN", NULL);
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
+	setp = levelsCache.l4data.warlord2_dun.GetData();
 	rw = *setp;
 	sp = setp + 2;
 	rh = *sp;
@@ -221,7 +224,6 @@ void DrawWarLord(int x, int y)
 			sp += 2;
 		}
 	}
-	mem_free_dbg(setp);
 }
 
 void DrawSChamber(int q, int x, int y)
@@ -229,10 +231,12 @@ void DrawSChamber(int q, int x, int y)
 	int i, j;
 	int rw, rh;
 	int xx, yy;
-	BYTE *sp, *setp;
+	const BYTE *sp;
+	const BYTE *setp;
 	int v;
 
-	setp = LoadFileInMem("Levels\\L2Data\\Bonestr1.DUN", NULL);
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
+	setp = levelsCache.l2data.bonestr1_dun.GetData();
 	rw = *setp;
 	sp = setp + 2;
 	rh = *sp;
@@ -256,16 +260,17 @@ void DrawSChamber(int q, int x, int y)
 	yy = 2 * y + 23;
 	quests[q]._qtx = xx;
 	quests[q]._qty = yy;
-	mem_free_dbg(setp);
 }
 
 void DrawLTBanner(int x, int y)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *sp, *setp;
+	const BYTE *sp;
+	const BYTE *setp;
 
-	setp = LoadFileInMem("Levels\\L1Data\\Banner1.DUN", NULL);
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
+	setp = levelsCache.l1data.banner1_dun.GetData();
 	rw = *setp;
 	sp = setp + 2;
 	rh = *sp;
@@ -282,16 +287,17 @@ void DrawLTBanner(int x, int y)
 			sp += 2;
 		}
 	}
-	mem_free_dbg(setp);
 }
 
 void DrawBlind(int x, int y)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *sp, *setp;
+	const BYTE *sp;
+	const BYTE *setp;
 
-	setp = LoadFileInMem("Levels\\L2Data\\Blind1.DUN", NULL);
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
+	setp = levelsCache.l2data.blind1_dun.GetData();
 	rw = *setp;
 	sp = setp + 2;
 	rh = *sp;
@@ -308,16 +314,17 @@ void DrawBlind(int x, int y)
 			sp += 2;
 		}
 	}
-	mem_free_dbg(setp);
 }
 
 void DrawBlood(int x, int y)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *sp, *setp;
+	const BYTE *sp;
+	const BYTE *setp;
 
-	setp = LoadFileInMem("Levels\\L2Data\\Blood2.DUN", NULL);
+	auto& levelsCache = asset::GlobalCache::Get().diabdat.levels;
+	setp = levelsCache.l2data.blood2_dun.GetData();
 	rw = *setp;
 	sp = setp + 2;
 	rh = *sp;
@@ -334,7 +341,6 @@ void DrawBlood(int x, int y)
 			sp += 2;
 		}
 	}
-	mem_free_dbg(setp);
 }
 
 void DRLG_CheckQuests(int x, int y)
