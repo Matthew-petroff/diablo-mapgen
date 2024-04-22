@@ -39,7 +39,6 @@ void InitVision();
 void ChangeVisionRadius(int id, int r);
 void ChangeVisionXY(int id, int x, int y);
 void ProcessVisionList();
-void lighting_color_cycling();
 
 /* rdata */
 

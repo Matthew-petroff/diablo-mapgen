@@ -490,29 +490,3 @@ void ProcessVisionList()
 
 	dovision = FALSE;
 }
-
-void lighting_color_cycling()
-{
-	int i, j, l;
-	BYTE col;
-	BYTE *tbl;
-
-	l = light4flag ? 4 : 16;
-
-	if (leveltype != DTYPE_HELL) {
-		return;
-	}
-
-	tbl = pLightTbl;
-
-	for (j = 0; j < l; j++) {
-		tbl++;
-		col = *tbl;
-		for (i = 0; i < 30; i++) {
-			tbl[0] = tbl[1];
-			tbl++;
-		}
-		*tbl = col;
-		tbl += 225;
-	}
-}
