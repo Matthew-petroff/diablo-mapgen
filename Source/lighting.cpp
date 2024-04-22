@@ -1069,26 +1069,6 @@ void InitVision()
 
 }
 
-int AddVision(int x, int y, int r, BOOL mine)
-{
-	int vid; // BUGFIX: if numvision >= MAXVISION behavior is undefined
-
-	if (numvision < MAXVISION) {
-		VisionList[numvision]._lx = x;
-		VisionList[numvision]._ly = y;
-		VisionList[numvision]._lradius = r;
-		vid = visionid++;
-		VisionList[numvision]._lid = vid;
-		VisionList[numvision]._ldel = FALSE;
-		VisionList[numvision]._lunflag = FALSE;
-		VisionList[numvision]._lflags = mine != 0;
-		numvision++;
-		dovision = TRUE;
-	}
-
-	return vid;
-}
-
 void ChangeVisionRadius(int id, int r)
 {
 	int i;

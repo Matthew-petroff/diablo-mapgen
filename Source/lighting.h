@@ -40,7 +40,6 @@ void ChangeLight(int i, int x, int y, int r);
 void ProcessLightList();
 void SavePreLighting();
 void InitVision();
-int AddVision(int x, int y, int r, BOOL mine);
 void ChangeVisionRadius(int id, int r);
 void ChangeVisionXY(int id, int x, int y);
 void ProcessVisionList();
