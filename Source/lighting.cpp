@@ -928,19 +928,6 @@ void InitLightMax()
 	}
 }
 
-void InitLighting()
-{
-	int i;
-
-	numlights = 0;
-	dolighting = FALSE;
-	lightflag = FALSE;
-
-	for (i = 0; i < MAXLIGHTS; i++) {
-		lightactive[i] = i;
-	}
-}
-
 int AddLight(int x, int y, int r)
 {
 	return -1;
