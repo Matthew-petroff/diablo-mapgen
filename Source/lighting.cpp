@@ -12,7 +12,6 @@ int numlights;
 BYTE lightradius[16][128];
 BOOL dovision;
 int numvision;
-char lightmax;
 BOOL dolighting;
 BYTE lightblock[64][16][16];
 int visionid;
@@ -261,7 +260,7 @@ void ToggleLighting_2()
 	if (lightflag) {
 		memset(dLight, 0, sizeof(dLight));
 	} else {
-		memset(dLight, lightmax, sizeof(dLight));
+		memset(dLight, 0, sizeof(dLight));
 		for (i = 0; i < MAX_PLRS; i++) {
 			if (plr[i].plractive && plr[i].plrlevel == currlevel) {
 				DoLighting(plr[i]._px, plr[i]._py, plr[i]._pLightRad, -1);
@@ -288,15 +287,6 @@ void ToggleLighting()
 	}
 }
 #endif
-
-void InitLightMax()
-{
-	if (light4flag) {
-		lightmax = 3;
-	} else {
-		lightmax = 15;
-	}
-}
 
 int AddLight(int x, int y, int r)
 {

@@ -13,7 +13,6 @@ extern int numlights;
 extern BYTE lightradius[16][128];
 extern BOOL dovision;
 extern int numvision;
-extern char lightmax;
 extern BOOL dolighting;
 extern int visionid;
 extern BYTE *pLightTbl;
@@ -26,7 +25,6 @@ void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible);
 void ToggleLighting_2();
 void ToggleLighting();
 #endif
-void InitLightMax();
 int AddLight(int x, int y, int r);
 void AddUnLight(int i);
 void ChangeLightRadius(int i, int r);
