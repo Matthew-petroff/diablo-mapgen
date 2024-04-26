@@ -736,7 +736,7 @@ void PlaceUniqueMonst(int uniqindex, int miniontype, int bosspacksize)
 		Monst->mlid = 0;
 	else
 #endif
-		Monst->mlid = AddLight(Monst->_mx, Monst->_my, 3);
+		Monst->mlid = -1;
 
 	if (gbMaxPlayers != 1) {
 		if (Monst->_mAi == AI_LAZHELP)

@@ -18,24 +18,9 @@ extern int visionid;
 extern BYTE *pLightTbl;
 extern BOOL lightflag;
 
-void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum);
 void DoUnVision(int nXPos, int nYPos, int nRadius);
 void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible);
-#ifdef _DEBUG
-void ToggleLighting_2();
-void ToggleLighting();
-#endif
-int AddLight(int x, int y, int r);
-void AddUnLight(int i);
-void ChangeLightRadius(int i, int r);
-void ChangeLightXY(int i, int x, int y);
-void ChangeLightOff(int i, int x, int y);
-void ChangeLight(int i, int x, int y, int r);
-void ProcessLightList();
-void SavePreLighting();
 void InitVision();
-void ChangeVisionRadius(int id, int r);
-void ChangeVisionXY(int id, int x, int y);
 
 /* rdata */
 
