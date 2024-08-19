@@ -66,6 +66,9 @@ int PathLength(Point start, Point end)
 	return FindPath(PosOkPlayer, 0, start.x, start.y, end.x, end.y, Path);
 }
 
+/**
+ * Unused
+ */
 bool IsVisible(Point start, Point end)
 {
 	if (start == Point { -1, -1 } || end == Point { -1, -1 }) {
@@ -132,7 +135,7 @@ int GetTeleportTime(Point start, Point end)
 	if (IsVisible(start, end))
 		cDistance = 5;
 
-	/** @todo Take teleport limits into consideration instead of just estimating 5 steps */
+	/** @todo Take teleport limits in to considerations instead of just estimating 5 steps */
 	return cDistance * ticksToTeleport / 5;
 }
 
@@ -150,31 +153,25 @@ int GetShortestTeleportTime(Point startA, Point startB, Point end)
 
 void setDoorSolidState(BOOLEAN doorState)
 {
-	switch (leveltype) {
-	case DTYPE_CATHEDRAL:
+	if (leveltype == DTYPE_CATHEDRAL) {
 		nSolidTable[44] = doorState;
 		nSolidTable[46] = doorState;
 		nSolidTable[51] = doorState;
 		nSolidTable[56] = doorState;
 		nSolidTable[214] = doorState;
 		nSolidTable[270] = doorState;
-		break;
-	case DTYPE_CATACOMBS:
+	} else if (leveltype == DTYPE_CATACOMBS) {
 		nSolidTable[55] = doorState;
 		nSolidTable[58] = doorState;
 		nSolidTable[538] = doorState;
 		nSolidTable[540] = doorState;
-		break;
-	case DTYPE_CAVES:
+	} else if (leveltype == DTYPE_CAVES) {
 		nSolidTable[531] = doorState;
 		nSolidTable[534] = doorState;
-		break;
-	default:
-		break;
 	}
 }
 
-bool IsGoodLevelSorcStrategy()
+bool IsGoodLevelSoursororStrategy()
 {
 	int tickLenth = 0;
 	tickLenth += 20; // Load screens
@@ -183,43 +180,43 @@ bool IsGoodLevelSorcStrategy()
 		int walkTicks = GetWalkTime(Spawn, StairsDown);
 		if (walkTicks == -1) {
 			if (Config.verbose)
-				std::cerr << "PATH: Aborted walking to stairs." << std::endl;
+				std::cerr << "Path: Gave up on walking to the stairs" << std::endl;
 			return false;
 		}
 		tickLenth += walkTicks;
 	} else if (currlevel == 9) {
 		LocateItem();
-		int pathToItem = -1;
+		int pathToPuzzler = -1;
 		if (POI != Point { -1, -1 }) {
 			int walkTicks = GetWalkTime(Spawn, POI);
 			if (walkTicks != -1) {
 				int teleportTime = GetTeleportTime(Spawn, StairsDown);
 				if (teleportTime != -1) {
-					pathToItem += walkTicks;
-					pathToItem += 40; // Pick up Puzzler
-					pathToItem += teleportTime;
+					pathToPuzzler += walkTicks;
+					pathToPuzzler += 40; // Pick up Puzzler
+					pathToPuzzler += teleportTime;
 				}
 			}
 		}
 
-		if (pathToItem != -1) {
+		if (pathToPuzzler != -1) {
 			if (Config.verbose)
-				std::cerr << "PATH: Located target item." << std::endl;
-			tickLenth += pathToItem;
+				std::cerr << "Path: Found Naj's Puzzler" << std::endl;
+			tickLenth += pathToPuzzler;
 		} else {
 			if (Config.verbose)
-				std::cerr << "PATH: Went to town to get obtain Book of Teleport." << std::endl;
+				std::cerr << "Path: Went to town to get a book of teleport" << std::endl;
 			tickLenth += 880; // Buying a book of teleport
 			int walkTicks = GetTeleportTime(Spawn, StairsDown);
 			if (walkTicks == -1) {
 				if (Config.verbose)
-					std::cerr << "Path: Stairs not found." << std::endl;
+					std::cerr << "Path: Couldn't find the stairs" << std::endl;
 				return false;
 			}
 			tickLenth += walkTicks;
 		}
 
-		tickLenth += 1100; // Fight monsters to get target item, or level up to read the book
+		tickLenth += 1100; // Fight monsters to get Puzzler or level up to read the book
 	} else if (currlevel == 15) {
 		Point target = { -1, -1 };
 
@@ -232,24 +229,24 @@ bool IsGoodLevelSorcStrategy()
 			target = { stand._ox, stand._oy };
 		}
 
-		// Locate Lazarus warp
+		// Locate Lazarous warp
 		if (POI != Point { -1, -1 }) {
 			if (Config.verbose)
-				std::cerr << "PATH: Located Lazarus warp." << std::endl;
+				std::cerr << "Path: Found the warp to Lazarus" << std::endl;
 			target = POI;
 		}
 
 		int teleportTime = GetShortestTeleportTime(Spawn, StairsDownPrevious, target);
 		if (teleportTime == -1) {
 			if (Config.verbose)
-				std::cerr << "PATH: Stairs not found." << std::endl;
+				std::cerr << "Path: Couldn't find the stairs" << std::endl;
 			return false;
 		}
 		tickLenth += teleportTime;
 
 		if (POI == Point { -1, -1 }) {
 			if (Config.verbose)
-				std::cerr << "PATH: Advanced Lazarus quest at Cain." << std::endl;
+				std::cerr << "Path: Told Cain about Lazarus" << std::endl;
 			tickLenth += 20;  // Pick up staff
 			tickLenth += 580; // Show staff to Cain
 		}
@@ -259,7 +256,7 @@ bool IsGoodLevelSorcStrategy()
 		int teleportTime2 = GetTeleportTime(target, StairsDown);
 		if (teleportTime2 == -1) {
 			if (Config.verbose)
-				std::cerr << "PATH: Stairs not found." << std::endl;
+				std::cerr << "Path: Couldn't find the stairs" << std::endl;
 			return false;
 		}
 		tickLenth += teleportTime2;
@@ -267,7 +264,7 @@ bool IsGoodLevelSorcStrategy()
 		int teleportTime = GetShortestTeleportTime(Spawn, StairsDownPrevious, StairsDown);
 		if (teleportTime == -1) {
 			if (Config.verbose)
-				std::cerr << "PATH: Stairs not found." << std::endl;
+				std::cerr << "Path: Couldn't find the stairs" << std::endl;
 			return false;
 		}
 		tickLenth += teleportTime;
@@ -280,11 +277,11 @@ bool IsGoodLevelSorcStrategy()
 	TotalTickLenth += tickLenth;
 
 	if (Config.verbose)
-		std::cerr << "PATH: Completed dungeon level " << (int)currlevel << " @ " << formatTime() << std::endl;
+		std::cerr << "Path: Compleated dlvl " << (int)currlevel << " @ " << formatTime() << std::endl;
 
 	if (TotalTickLenth > *Config.target * 20) {
 		if (Config.verbose)
-			std::cerr << "PATH: Exceeded path time. Aborted." << std::endl;
+			std::cerr << "Path: It's to slow to beat this one, giving up" << std::endl;
 		return false;
 	}
 
@@ -294,7 +291,7 @@ bool IsGoodLevelSorcStrategy()
 bool IsGoodLevel()
 {
 	setDoorSolidState(FALSE); // Open doors
-	bool result = IsGoodLevelSorcStrategy();
+	bool result = IsGoodLevelSoursororStrategy();
 	setDoorSolidState(TRUE); // Close doors
 
 	return result;
@@ -308,16 +305,16 @@ bool ScannerPath::skipSeed()
 {
 	if (quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
 		if (Config.verbose)
-			std::cerr << "Sign Quest present. Skipping Game Seed: " << sgGameInitInfo.dwSeed << std::endl;
+			std::cerr << "Game Seed: " << sgGameInitInfo.dwSeed << " thrown out: Sign Quest" << std::endl;
 		return true;
 	}
 
 	TotalTickLenth = 0;
 	TotalTickLenth += 435;  // Walk to Adria
-	TotalTickLenth += 1400; // Dupe Gold
-	TotalTickLenth += 250;  // Buy 2 books
-	TotalTickLenth += 200;  // Buy Potions of Full Mana
-	TotalTickLenth += 540;  // Walk to Cathedral
+	TotalTickLenth += 1400; // Dup gold
+	TotalTickLenth += 250;  // Buy to books
+	TotalTickLenth += 200;  // Buy full manas
+	TotalTickLenth += 540;  // Walk to church
 	Ended = false;
 
 	return false;
@@ -340,7 +337,7 @@ bool ScannerPath::levelMatches(std::optional<uint32_t> levelSeed)
 
 	int level = currlevel;
 	if (level == 16) {
-		std::cout << sgGameInitInfo.dwSeed << " (" << formatTime() << ")" << std::endl;
+		std::cout << sgGameInitInfo.dwSeed << " (etc " << formatTime() << ")" << std::endl;
 		Ended = true;
 	}
 
