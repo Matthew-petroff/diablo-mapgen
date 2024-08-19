@@ -109,9 +109,11 @@ This command splits up the seed range between processes concurrently. You can ad
 
 - `--scanner <type>`: How to analyze levels (default pattern).
 - `--target <value>`: A target value to set for the scanner (level, time, or seed).
+- `--targetStr <string>:` A target string to set for the scanner (item name).
 - `--start <offset>`: The seed to start from.
 - `--count <number_of_seeds>`: The number of seeds to process.
-- `--threads <number_of_processes>`: The number of concurrent processes (default is one less then CPU threads)
+- `--threads <number_of_processes>`: The number of concurrent processes (default is one less then CPU threads).
+- `--mp`: Runs game logic in multiplayer mode.
 
 ## Terminology
 
