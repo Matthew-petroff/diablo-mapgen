@@ -200,11 +200,9 @@ bool IsGoodLevelSorcStrategy()
 			return false;
 		}
 
-		LocateItem();
-
 		int pathToItem = -1;
 
-		if (POI != Point { -1, -1 }) {
+		if (LocateItem()) {
 			int walkTicks = GetWalkTime(Spawn, POI);
 			if (walkTicks != -1) {
 				int teleportTime = GetTeleportTime(Spawn, StairsDown);
