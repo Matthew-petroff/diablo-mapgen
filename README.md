@@ -50,11 +50,11 @@ As an example, you can run the following command to scan for seeds where Naj's P
 - `--scanner <type>`: How to analyze levels. Available options:
   - `none`: No analysis (default).
   - `warp`: Find seeds with a warp on level 15.
-  - `path`: Estimate the time to complete the levels, skip seeds that take longer then number of secound specified by `--target`.
+  - `path`: Estimate the time to complete the levels, skip seeds that take longer then number of secound specified by `--target` (default 420).
   - `stairs`: Look for stairs with a very short distance between them.
   - `pattern`: Search for levels specified by `--target` (default blank) based on tile patterns and print out there level seed.
   - `gameseed`: Search for GameSeeds that generates the LevelSeed given by `--target` (default 9:3916317768).
-  - `item`: Search for items on the level specified by `--target` (default [Scan Every Dlvl]), using item name string specified by `--targetStr`.
+  - `item`: Search for items on the level specified by `--target` (default [Scan Every Dlvl]), using item name string specified by `--targetStr` (default "Naj's Puzzler").
 - `--start <offset>`: The seed to start from.
 - `--count <number_of_seeds>`: The number of seeds to process.
 - `--seeds <file>`: A file to read seeds from rather then using a sequental range.
