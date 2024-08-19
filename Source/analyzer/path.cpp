@@ -1,3 +1,9 @@
+/**
+ * @file analyzer/path.cpp
+ *
+ * Implementation of scanner for finding the optimal path through the game.
+ */
+
 #include "path.h"
 
 #include <iostream>
@@ -304,6 +310,9 @@ bool Ended;
 
 }
 
+/*
+ * @brief Skips the game seed if the sign quest is present.
+ */
 bool ScannerPath::skipSeed()
 {
 	if (quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
