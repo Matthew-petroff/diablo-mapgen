@@ -1,3 +1,9 @@
+/**
+ * @file analyzer/pattern.cpp
+ *
+ * Implementation of scanner for finding a level seed based on tile pattern.
+ */
+
 #include "pattern.h"
 
 #include <cstdint>
@@ -9,10 +15,10 @@
 #include "../gendung.h"
 #include "../quests.h"
 
-#define TEMPLATEX 8
-#define TEMPLATEY 9
+constexpr auto PatternX = 8;
+constexpr auto PatternY = 9;
 
-const uint8_t GROOBO1[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel1[PatternX][PatternY] = {
 	// clang-format off
     {   0,  0,  0,  0,  0,  0,  4,  0,  0 },
     {   0,  0, 66,204,  0,  0,  1,129,  0 },
@@ -25,7 +31,7 @@ const uint8_t GROOBO1[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO2[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel2[PatternX][PatternY] = {
 	// clang-format off
     {   0,  0, 66,204,  0,  0,  0,  0,  0 },
     {   4, 63, 64, 65,108,  0,  0,  0,  0 },
@@ -38,7 +44,7 @@ const uint8_t GROOBO2[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO3[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel3[PatternX][PatternY] = {
 	// clang-format off
     {   0,  0, 66,204,  0,  0,  0,  0,  0 },
     {   4, 63, 64, 65,  2,  0,  0,  0, 16 },
@@ -51,7 +57,7 @@ const uint8_t GROOBO3[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO4[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel4[PatternX][PatternY] = {
 	// clang-format off
     {   0,  0, 66,  0,  0,  0,  0,122,  0 },
     {   0, 63, 64, 65,  0,  0,  0,  0,  0 },
@@ -64,7 +70,7 @@ const uint8_t GROOBO4[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO5[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel5[PatternX][PatternY] = {
 	// clang-format off
     {   1,  3,  3,  3,  3,  3,  0,  0,  0 },
     {  81,  3, 72, 77,  3, 48, 71,  0,  0 },
@@ -77,7 +83,7 @@ const uint8_t GROOBO5[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO6[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel6[PatternX][PatternY] = {
 	// clang-format off
     {   0,  0,  0,  0, 91,  0,  0,  0,  0 },
     {  77,  0, 48, 71, 89,  0,  0,  0,  0 },
@@ -90,7 +96,7 @@ const uint8_t GROOBO6[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO7[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel7[PatternX][PatternY] = {
 	// clang-format off
     {   1,  0,  0,  0,  0,  0,  0,  0,  0 },
     {  82,  0, 72, 77,  0, 48, 71,  0,  0 },
@@ -102,7 +108,7 @@ const uint8_t GROOBO7[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO8[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel8[PatternX][PatternY] = {
 	// clang-format off
     {   1, 89,  0,  0,  0,  0,  0,  0,  0 },
     {  82,  0, 72, 77,  0, 48, 71,  0,  8 },
@@ -115,7 +121,7 @@ const uint8_t GROOBO8[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO9[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel9[PatternX][PatternY] = {
 	// clang-format off
     {   0,  0,  0,  0,  8,  0,  0,  0,  0 },
     {   0,  8,  8, 51, 50,  8,  8, 89,  0 },
@@ -128,7 +134,7 @@ const uint8_t GROOBO9[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO10[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel10[PatternX][PatternY] = {
 	// clang-format off
     {   0,  0,  0,  0,  0,  0,  0,  0,  0 },
     {   0,  0,  0, 51, 50,  0, 92,  0,  0 },
@@ -141,7 +147,7 @@ const uint8_t GROOBO10[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO11[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel11[PatternX][PatternY] = {
 	// clang-format off
     {   0,  3,  8,  8,  8,  8,  0,  0,  0 },
     {   7, 13,  3, 51, 50,  8,  8,  0,  0 },
@@ -154,7 +160,7 @@ const uint8_t GROOBO11[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO12[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel12[PatternX][PatternY] = {
 	// clang-format off
     {   0,  0,  0,  8,  8,  8,  8, 47,107 },
     {   0, 11,  3, 51, 50,  8,  8, 46,  7 },
@@ -167,7 +173,7 @@ const uint8_t GROOBO12[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO13[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel13[PatternX][PatternY] = {
 	// clang-format off
     {   0,  0,  0, 50, 48, 10,  0,  0,  0 },
     {   0, 36, 38, 35, 47, 81, 49,  0,  6 },
@@ -180,7 +186,7 @@ const uint8_t GROOBO13[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO14[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel14[PatternX][PatternY] = {
 	// clang-format off
     {   0, 51,  6,  6,  0,  0,  0,  0,  0 },
     {   6,  0, 45, 41, 97,  0,  0,  0,  0 },
@@ -193,7 +199,7 @@ const uint8_t GROOBO14[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO15[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel15[PatternX][PatternY] = {
 	// clang-format off
     {   0,  0, 36, 38, 35,  6, 51, 48,  0 },
     {   0,  0, 37, 34, 33, 32,  6, 47,  4 },
@@ -206,7 +212,7 @@ const uint8_t GROOBO15[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-const uint8_t GROOBO16[TEMPLATEX][TEMPLATEY] = {
+const uint8_t dungeonLevel16[PatternX][PatternY] = {
 	// clang-format off
     {   0,  0,  0, 96,  6,  6,  0,119,117 },
     {   0, 36, 38, 35, 51,  6,  0,116,  9 },
@@ -219,12 +225,12 @@ const uint8_t GROOBO16[TEMPLATEX][TEMPLATEY] = {
 	// clang-format on
 };
 
-bool UseSolidScanner(int level)
+static bool UseSolidScanner(int level)
 {
 	return false;
 }
 
-bool UseObjectScanner(int level)
+static bool UseObjectScanner(int level)
 {
 	return false;
 }
@@ -239,9 +245,9 @@ DungeonMode ScannerPattern::getDungeonMode()
 	return DungeonMode::BreakOnFailure;
 }
 
-void ForceSeeds(int level)
+static void ForceSeeds(int level)
 {
-	// Church
+	// Cathedral
 	glSeedTbl[1] = sgGameInitInfo.dwSeed; // Matches level seed 1691869883, dungeon seed 1342003104, game seed 1230144506 24 18:48
 	quests[Q_BUTCHER]._qactive = QUEST_INIT;
 	quests[Q_PWATER]._qactive = QUEST_INIT;
@@ -277,18 +283,18 @@ void ForceSeeds(int level)
 
 bool ScannerPattern::skipLevel(int level)
 {
-	bool skip = level == 3 || level == 4; // Pattern are still not correct
+	bool skip = level == 3 || level == 4; // Pattern is still not correct
 	if (Config.target)
 		skip = level != *Config.target;
 
 	if (!skip && !UseObjectScanner(level) && !UseSolidScanner(level))
-		ForceSeeds(level); // TODO unclober the seeds and quests
+		ForceSeeds(level); // @todo undiscombobulate the seeds and quests
 
 	return skip;
 }
 
-#define SolidX 26
-#define SolidY 26
+constexpr auto SolidX = 26;
+constexpr auto SolidY = 26;
 
 /**
  * Data format of solid patterns
@@ -362,21 +368,21 @@ const uint8_t Dlvl4Solid[SolidX][SolidY] = {
 	// clang-format on
 };
 
-bool matchesSolidPattern()
+bool MatchesSolidPattern()
 {
 	if (StairsDown != Point { Spawn.x + 6, Spawn.y + 2 })
 		return false;
 
 	const uint8_t(*pattern)[SolidX][SolidY];
-	int xoffset;
+	int xOffset;
 	int yoffset;
 	if (currlevel == 3) {
 		pattern = &Dlvl3Solid;
-		xoffset = 11;
+		xOffset = 11;
 		yoffset = 5;
 	} else if (currlevel == 4) {
 		pattern = &Dlvl4Solid;
-		xoffset = -3;
+		xOffset = -3;
 		yoffset = 18;
 	}
 
@@ -385,7 +391,7 @@ bool matchesSolidPattern()
 		for (int column = 0; column < SolidY; column++) {
 			if ((*pattern)[row][column] == 9)
 				continue;
-			int x = Spawn.x + row - xoffset;
+			int x = Spawn.x + row - xOffset;
 			int y = Spawn.y + column - yoffset;
 
 			if (x < 0 || y < 0 || x >= MAXDUNX || y >= MAXDUNY || nSolidTable[dPiece[y][x]] != ((*pattern)[row][column] % 2)) {
@@ -397,12 +403,12 @@ bool matchesSolidPattern()
 		}
 	}
 
-	std::cout << sgGameInitInfo.dwSeed << " possible game Seed for dlvl " << (int)currlevel << std::endl;
+	std::cout << "PATTERN: Potential dungeon level " << (int)currlevel << " seed: " << sgGameInitInfo.dwSeed << std::endl;
 
 	return true;
 }
 
-bool matchesObjectPattern()
+static bool MatchesObjectPattern()
 {
 	if (currlevel == 3) {
 		if (StairsDown != Point { Spawn.x + 6, Spawn.y + 2 })
@@ -448,67 +454,29 @@ bool matchesObjectPattern()
 			return false;
 	}
 
-	std::cout << sgGameInitInfo.dwSeed << " possible game Seed for dlvl " << (int)currlevel << std::endl;
+	std::cout << "PATTERN: Potential dungeon level " << (int)currlevel << " seed: " << sgGameInitInfo.dwSeed << std::endl;
 
 	return true;
 }
 
-bool matchesTilePattern(std::optional<uint32_t> levelSeed)
+static bool MatchesTilePattern(std::optional<uint32_t> levelSeed)
 {
-	int stairTile;
-	int xoffset = 3;
-	const uint8_t(*pattern)[TEMPLATEX][TEMPLATEY];
-	if (currlevel == 1) {
-		stairTile = 204;
-		pattern = &GROOBO1;
-	} else if (currlevel == 2) {
-		stairTile = 65;
-		pattern = &GROOBO2;
-	} else if (currlevel == 3) {
-		stairTile = 65;
-		pattern = &GROOBO3;
-	} else if (currlevel == 4) {
-		stairTile = 65;
-		pattern = &GROOBO4;
-	} else if (currlevel == 5) {
-		stairTile = 77;
-		pattern = &GROOBO5;
-	} else if (currlevel == 6) {
-		stairTile = 71;
-		pattern = &GROOBO6;
-	} else if (currlevel == 7) {
-		stairTile = 71;
-		pattern = &GROOBO7;
-		xoffset = 6;
-	} else if (currlevel == 8) {
-		stairTile = 71;
-		pattern = &GROOBO8;
-		xoffset = 6;
-	} else if (currlevel == 9) {
-		stairTile = 51;
-		pattern = &GROOBO9;
-	} else if (currlevel == 10) {
-		stairTile = 51;
-		pattern = &GROOBO10;
-	} else if (currlevel == 11) {
-		stairTile = 51;
-		pattern = &GROOBO11;
-	} else if (currlevel == 12) {
-		stairTile = 51;
-		pattern = &GROOBO12;
-	} else if (currlevel == 13) {
-		stairTile = 35;
-		pattern = &GROOBO13;
-	} else if (currlevel == 14) {
-		stairTile = 41;
-		pattern = &GROOBO14;
-	} else if (currlevel == 15) {
-		stairTile = 34;
-		pattern = &GROOBO15;
-	} else if (currlevel == 16) {
-		stairTile = 35;
-		pattern = &GROOBO16;
+	constexpr int xOffsetValues[] = { 3, 3, 3, 3, 3, 3, 6, 6, 3, 3, 3, 3, 3, 3, 3, 3 };
+	constexpr int stairTileValues[] = { 204, 65, 65, 65, 77, 71, 71, 71, 51, 51, 51, 51, 35, 41, 34, 35 };
+	constexpr const uint8_t(*patterns[])[PatternX][PatternY] = {
+		&dungeonLevel1, &dungeonLevel2, &dungeonLevel3, &dungeonLevel4, &dungeonLevel5,
+		&dungeonLevel6, &dungeonLevel7, &dungeonLevel8, &dungeonLevel9, &dungeonLevel10,
+		&dungeonLevel11, &dungeonLevel12, &dungeonLevel13, &dungeonLevel14,
+		&dungeonLevel15, &dungeonLevel16
+	};
+
+	if (currlevel < 1 || currlevel > 16) {
+		return false;
 	}
+
+	int stairTile = stairTileValues[currlevel - 1];
+	int xOffset = xOffsetValues[currlevel - 1];
+	const uint8_t(*pattern)[PatternX][PatternY] = patterns[currlevel - 1];
 
 	bool foundStairs = false;
 	int sx = -1;
@@ -516,7 +484,7 @@ bool matchesTilePattern(std::optional<uint32_t> levelSeed)
 	for (int y = 0; y < DMAXX && !foundStairs; y++) {
 		for (int x = 0; x < DMAXY; x++) {
 			if (dungeon[x][y] == stairTile) {
-				sx = x - xoffset;
+				sx = x - xOffset;
 				sy = y - 1;
 				foundStairs = true;
 				break;
@@ -526,14 +494,14 @@ bool matchesTilePattern(std::optional<uint32_t> levelSeed)
 
 	if (!foundStairs) {
 		if (Config.verbose)
-			std::cerr << "Pattern: Failed to locate the stairs on level seed " << *levelSeed << std::endl;
+			std::cerr << "PATTERN: Failed to locate stairs on level seed " << *levelSeed << std::endl;
 		return false;
 	}
 
 	bool found = true;
 	int misses = 0;
-	for (int column = 0; column < TEMPLATEY; column++) {
-		for (int row = 0; row < TEMPLATEX; row++) {
+	for (int column = 0; column < PatternY; column++) {
+		for (int row = 0; row < PatternX; row++) {
 			if ((*pattern)[row][column] == 0)
 				continue;
 			int x = sx + column;
@@ -550,7 +518,7 @@ bool matchesTilePattern(std::optional<uint32_t> levelSeed)
 			return false;
 	}
 
-	std::cout << "Level Seed for dlvl " << (int)currlevel << ": " << *levelSeed << std::endl;
+	std::cout << "PATTERN: Dungeon level " << (int)currlevel << "  seed: " << *levelSeed << std::endl;
 
 	return true;
 }
@@ -560,8 +528,8 @@ bool ScannerPattern::levelMatches(std::optional<uint32_t> levelSeed)
 	if (levelSeed == std::nullopt)
 		return false;
 	if (UseObjectScanner(currlevel))
-		return matchesObjectPattern();
+		return MatchesObjectPattern();
 	if (UseSolidScanner(currlevel))
-		return matchesSolidPattern();
-	return matchesTilePattern(levelSeed);
+		return MatchesSolidPattern();
+	return MatchesTilePattern(levelSeed);
 }
