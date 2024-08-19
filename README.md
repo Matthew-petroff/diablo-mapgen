@@ -78,11 +78,10 @@ As an example, you can run the following command to scan for seeds where Naj's P
 
 - `--ascii`: Print ASCII version of levels.
 - `--export`: Export levels as .dun files.
-- `> <filename>.<ext>`: Save the results to a file.
 
-### Seed Filtering Strategy
+## Seed Filtering Strategy
 
-To efficiently analyze seeds start by using the `warp`, or `puzzler` options to quickly filter out seeds based on their criteria. Save the filtered results using the `>` operator to a file for use with the next analyzer. For example:
+To efficiently analyze seeds start by using the `warp`, or `item` options to quickly filter out seeds based on their criteria. Save the filtered results using the `>` operator to a file for use with the next analyzer. For example:
 
 ```
 ./diablo-mapgen --scanner warp --start 315532800 --count 1864050846 > filtered_seeds.txt
