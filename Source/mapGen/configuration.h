@@ -17,6 +17,6 @@ struct Configuration {
 	bool asciiLevels = false;
 	bool exportLevels = false;
 	std::optional<uint32_t> target = std::nullopt;
-	std::string targetStr = "";
+	std::string targetStr = "Naj's Puzzler";
 	bool verbose = false;
 };

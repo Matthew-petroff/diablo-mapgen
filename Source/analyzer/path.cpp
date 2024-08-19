@@ -194,8 +194,16 @@ bool IsGoodLevelSorcStrategy()
 		}
 		tickLenth += walkTicks;
 	} else if (currlevel == 9) {
+		if (Config.targetStr.compare("Naj's Puzzler") != 0) {
+			if (Config.verbose)
+				std::cerr << "PATH: Naj's Puzzler not target item. Aborted." << std::endl;
+			return false;
+		}
+
 		LocateItem();
+
 		int pathToItem = -1;
+
 		if (POI != Point { -1, -1 }) {
 			int walkTicks = GetWalkTime(Spawn, POI);
 			if (walkTicks != -1) {
@@ -219,7 +227,7 @@ bool IsGoodLevelSorcStrategy()
 			int walkTicks = GetTeleportTime(Spawn, StairsDown);
 			if (walkTicks == -1) {
 				if (Config.verbose)
-					std::cerr << "Path: Stairs not found." << std::endl;
+					std::cerr << "PATH: Stairs not found." << std::endl;
 				return false;
 			}
 			tickLenth += walkTicks;
