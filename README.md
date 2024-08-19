@@ -8,7 +8,7 @@ Diablo MapGen is a tool designed to analyze maps generated in the game Diablo I 
 
 ## Features
 
-- Analyzes Diablo I maps to identify optimal seed candidates.
+- Analyzes Diablo 1 maps to identify optimal seed candidates.
 - Considers factors such as map layout, item distribution, and quest placement.
 - Designed to assist speedrunners in achieving faster completion times.
 
@@ -45,23 +45,40 @@ As an example, you can run the following command to scan for seeds where Naj's P
 
 ### Options
 
-- `--ascii`: Print ASCII version of levels.
-- `--export`: Export levels as .dun files.
 - `--scanner <type>`: How to analyze levels. Available options:
   - `none`: No analysis (default).
-  - `warp`: Find seeds with a warp on level 15.
-  - `path`: Estimate the time to complete the levels, skip seeds that take longer then number of secound specified by `--target`.
+  - `warp`: Find seeds with a Lazarus warp on level 15.
+  - `path`: Estimate the time to complete the levels.
+	- `target`: The time (in seconds) to complete the levels to skip seeds that take longer.
   - `stairs`: Look for stairs with a very short distance between them.
-  - `pattern`: Search for levels specified by `--target` (default blank) based on tile patterns and print out there level seed.
-  - `gameseed`: Search for GameSeeds that generates the LevelSeed given by `--target` (default 9:3916317768).
-  - `item`: Search for items on the level specified by `--target` (default [Scan Every Dlvl]), using item name string specified by `--targetStr`.
-- `--start <offset>`: The seed to start from.
-- `--count <number_of_seeds>`: The number of seeds to process.
-- `--seeds <file>`: A file to read seeds from rather then using a sequental range.
-- `--target <value>`: A target value to set for the scanner (level, time, or seed).
+  - `pattern`: Search for Level Seeds based on tile patterns.
+	- `target`: The dungeon level to search for.
+  - `gameseed`: Search for Game Seeds that generate a specified Level Seed (default 9:3916317768).
+	- `target`: The Level Seed to search for.
+  - `item`: Search for items on a dungeon level (default 0).
+	- `target`: The dungeon level, 0-16 (Note: 0 is used to scan every dungeon level).
+	- `targetStr`: The item name string to search for.
+
+# Game Seed Options
+
+- `--start <offset>`: The Game Seed to start from.
+- `--count <number_of_seeds>`: The number of Game Seeds to process.
+- `--seeds <file>`: A file to read Game Seeds from rather then using a sequental range.
+
+# Game Logic Options
+
 - `--mp`: Runs game logic in multiplayer mode.
+
+# Information Options
+
 - `--quiet`: Do not print progress messages.
-- `--verbose`: Print out details about seeds.
+- `--verbose`: Print out extra details about scans.
+
+# Output Options
+
+- `--ascii`: Print ASCII version of levels.
+- `--export`: Export levels as .dun files.
+- `> <filename>.<ext>`: Save the results to a file.
 
 ### Seed Filtering Strategy
 
