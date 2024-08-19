@@ -1,3 +1,9 @@
+/**
+ * @file analyzer/gameseed.cpp
+ *
+ * Implementation of scanner for finding the game seed that matches the target level seed.
+ */
+
 #include "gameseed.h"
 
 #include <iostream>
@@ -12,6 +18,9 @@ DungeonMode ScannerGameSeed::getDungeonMode()
 	return DungeonMode::BreakOnSuccess;
 }
 
+/*
+ * @brief Skips the level if it is not level 9 or if it does not contain Lava Lords.
+ */
 bool ScannerGameSeed::skipLevel(int level)
 {
 	if (level != 9)
@@ -19,13 +28,16 @@ bool ScannerGameSeed::skipLevel(int level)
 
 	InitDungeonMonsters();
 
-	bool hasLavaLoards = false;
-	for (int i = 0; i < nummtypes && !hasLavaLoards; i++)
-		hasLavaLoards = Monsters[i].mtype == MT_WMAGMA;
+	bool hasLavaLords = false;
+	for (int i = 0; i < nummtypes && !hasLavaLords; i++)
+		hasLavaLords = Monsters[i].mtype == MT_WMAGMA;
 
-	return !hasLavaLoards;
+	return !hasLavaLords;
 }
 
+/*
+ * @brief Captures game seed if the level seed matches the target level seed.
+ */
 bool ScannerGameSeed::levelMatches(std::optional<uint32_t> levelSeed)
 {
 	if (levelSeed == std::nullopt)
