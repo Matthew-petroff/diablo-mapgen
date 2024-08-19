@@ -454,7 +454,7 @@ static bool MatchesObjectPattern()
 			return false;
 	}
 
-	std::cout << "PATTERN: Potential dungeon level " << (int)currlevel << " seed: " << sgGameInitInfo.dwSeed << std::endl;
+	std::cout << sgGameInitInfo.dwSeed << " possible game Seed for dlvl " << (int)currlevel << std::endl;
 
 	return true;
 }
