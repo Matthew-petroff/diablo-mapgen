@@ -196,7 +196,7 @@ bool IsGoodLevelSorcStrategy()
 				int teleportTime = GetTeleportTime(Spawn, StairsDown);
 				if (teleportTime != -1) {
 					pathToItem += walkTicks;
-					pathToItem += 40; // Pick up Puzzler
+					pathToItem += 40; // Pick up target item
 					pathToItem += teleportTime;
 				}
 			}
