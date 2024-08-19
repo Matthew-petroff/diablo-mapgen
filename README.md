@@ -43,7 +43,7 @@ As an example, you can run the following command to scan for seeds where Naj's P
 ./diablo-mapgen --scanner item --target 9 --targetStr "Naj's Puzzler" --start 315532800 --count 1864050846
 ```
 
-### Options
+## Options
 
 - `--scanner <type>`: How to analyze levels. Available options:
   - `none`: No analysis (default).
@@ -59,22 +59,22 @@ As an example, you can run the following command to scan for seeds where Naj's P
 	- `target`: The dungeon level, 0-16 (Note: 0 is used to scan every dungeon level).
 	- `targetStr`: The item name string to search for.
 
-# Game Seed Options
+### Game Seed Options
 
 - `--start <offset>`: The Game Seed to start from.
 - `--count <number_of_seeds>`: The number of Game Seeds to process.
 - `--seeds <file>`: A file to read Game Seeds from rather then using a sequental range.
 
-# Game Logic Options
+### Game Logic Options
 
 - `--mp`: Runs game logic in multiplayer mode.
 
-# Information Options
+### Information Options
 
 - `--quiet`: Do not print progress messages.
 - `--verbose`: Print out extra details about scans.
 
-# Output Options
+### Output Options
 
 - `--ascii`: Print ASCII version of levels.
 - `--export`: Export levels as .dun files.
