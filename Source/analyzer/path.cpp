@@ -1,3 +1,9 @@
+/**
+ * @file analyzer/path.cpp
+ *
+ * Implementation of scanner for finding the optimal path through the game.
+ */
+
 #include "path.h"
 
 #include <iostream>
@@ -188,15 +194,21 @@ bool IsGoodLevelSorcStrategy()
 		}
 		tickLenth += walkTicks;
 	} else if (currlevel == 9) {
-		LocateItem();
+		if (Config.targetStr.compare("Naj's Puzzler") != 0) {
+			if (Config.verbose)
+				std::cerr << "PATH: Naj's Puzzler not target item. Aborted." << std::endl;
+			return false;
+		}
+
 		int pathToItem = -1;
-		if (POI != Point { -1, -1 }) {
+
+		if (LocateItem()) {
 			int walkTicks = GetWalkTime(Spawn, POI);
 			if (walkTicks != -1) {
 				int teleportTime = GetTeleportTime(Spawn, StairsDown);
 				if (teleportTime != -1) {
 					pathToItem += walkTicks;
-					pathToItem += 40; // Pick up Puzzler
+					pathToItem += 40; // Pick up target item
 					pathToItem += teleportTime;
 				}
 			}
@@ -213,7 +225,7 @@ bool IsGoodLevelSorcStrategy()
 			int walkTicks = GetTeleportTime(Spawn, StairsDown);
 			if (walkTicks == -1) {
 				if (Config.verbose)
-					std::cerr << "Path: Stairs not found." << std::endl;
+					std::cerr << "PATH: Stairs not found." << std::endl;
 				return false;
 			}
 			tickLenth += walkTicks;
@@ -304,6 +316,9 @@ bool Ended;
 
 }
 
+/*
+ * @brief Skips the game seed if the sign quest is present.
+ */
 bool ScannerPath::skipSeed()
 {
 	if (quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
