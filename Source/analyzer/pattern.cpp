@@ -403,7 +403,7 @@ bool MatchesSolidPattern()
 		}
 	}
 
-	std::cout << sgGameInitInfo.dwSeed  << " :: PATTERN: Potential dungeon level " << (int)currlevel << " seed located." << std::endl;
+	std::cout << sgGameInitInfo.dwSeed << " :: PATTERN: Potential dungeon level " << (int)currlevel << " seed located." << std::endl;
 
 	return true;
 }
