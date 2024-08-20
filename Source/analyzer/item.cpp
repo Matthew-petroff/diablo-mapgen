@@ -1,3 +1,9 @@
+/**
+ * @file analyzer/item.cpp
+ *
+ * Implementation of scanner for locating items within dungeon levels.
+ */
+
 #include "item.h"
 
 #include <iostream>
@@ -6,77 +12,82 @@
 #include "../monster.h"
 #include "../objects.h"
 
-static void CreateItemsFromObject(int oid)
+/*
+ * @brief Converts an object in the dungeon level to the opened/destroyed state to force generate items.
+ */
+static void SpawnObjectItem(int oid)
 {
-	switch (object[oid]._otype) {
+	auto &objectInfo = object[oid];
+
+	switch (objectInfo._otype) {
 	case OBJ_CHEST1:
 	case OBJ_CHEST2:
 	case OBJ_CHEST3:
 	case OBJ_TCHEST1:
 	case OBJ_TCHEST2:
 	case OBJ_TCHEST3:
-		SetRndSeed(object[oid]._oRndSeed);
+		SetRndSeed(objectInfo._oRndSeed);
 		if (setlevel) {
-			for (int j = 0; j < object[oid]._oVar1; j++) {
-				CreateRndItem(object[oid]._ox, object[oid]._oy, TRUE, TRUE, FALSE);
+			for (int j = 0; j < objectInfo._oVar1; j++) {
+				CreateRndItem(objectInfo._ox, objectInfo._oy, TRUE, TRUE, FALSE);
 			}
 		} else {
-			for (int j = 0; j < object[oid]._oVar1; j++) {
-				if (object[oid]._oVar2 != 0)
-					CreateRndItem(object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
+			for (int j = 0; j < objectInfo._oVar1; j++) {
+				if (objectInfo._oVar2 != 0)
+					CreateRndItem(objectInfo._ox, objectInfo._oy, FALSE, TRUE, FALSE);
 				else
-					CreateRndUseful(0, object[oid]._ox, object[oid]._oy, TRUE);
+					CreateRndUseful(0, objectInfo._ox, objectInfo._oy, TRUE);
 			}
 		}
 		break;
 	case OBJ_SARC:
-		SetRndSeed(object[oid]._oRndSeed);
-		if (object[oid]._oVar1 <= 2)
-			CreateRndItem(object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
+		SetRndSeed(objectInfo._oRndSeed);
+		if (objectInfo._oVar1 <= 2)
+			CreateRndItem(objectInfo._ox, objectInfo._oy, FALSE, TRUE, FALSE);
 		break;
 	case OBJ_DECAP:
-		SetRndSeed(object[oid]._oRndSeed);
-		CreateRndItem(object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
+		SetRndSeed(objectInfo._oRndSeed);
+		CreateRndItem(objectInfo._ox, objectInfo._oy, FALSE, TRUE, FALSE);
 		break;
 	case OBJ_BARREL:
-		SetRndSeed(object[oid]._oRndSeed);
-		if (object[oid]._oVar2 <= 1) {
-			if (object[oid]._oVar3 == 0)
-				CreateRndUseful(0, object[oid]._ox, object[oid]._oy, TRUE);
+		SetRndSeed(objectInfo._oRndSeed);
+		if (objectInfo._oVar2 <= 1) {
+			if (objectInfo._oVar3 == 0)
+				CreateRndUseful(0, objectInfo._ox, objectInfo._oy, TRUE);
 			else
-				CreateRndItem(object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
+				CreateRndItem(objectInfo._ox, objectInfo._oy, FALSE, TRUE, FALSE);
 		}
 		break;
 	case OBJ_SKELBOOK:
 	case OBJ_BOOKSTAND:
-		SetRndSeed(object[oid]._oRndSeed);
+		SetRndSeed(objectInfo._oRndSeed);
 		if (random_(161, 5) != 0)
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_SCROLL, TRUE, FALSE);
+			CreateTypeItem(objectInfo._ox, objectInfo._oy, FALSE, ITYPE_MISC, IMISC_SCROLL, TRUE, FALSE);
 		else
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_BOOK, TRUE, FALSE);
+			CreateTypeItem(objectInfo._ox, objectInfo._oy, FALSE, ITYPE_MISC, IMISC_BOOK, TRUE, FALSE);
 		break;
 	case OBJ_BOOKCASEL:
 	case OBJ_BOOKCASER:
-		SetRndSeed(object[oid]._oRndSeed);
-		CreateTypeItem(object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_BOOK, TRUE, FALSE);
+		SetRndSeed(objectInfo._oRndSeed);
+		CreateTypeItem(objectInfo._ox, objectInfo._oy, FALSE, ITYPE_MISC, IMISC_BOOK, TRUE, FALSE);
 		break;
 	case OBJ_ARMORSTAND:
 	case OBJ_WARARMOR: {
-		SetRndSeed(object[oid]._oRndSeed);
+		SetRndSeed(objectInfo._oRndSeed);
 		BOOL uniqueRnd = random_(0, 2);
 		if (currlevel <= 5) {
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, TRUE, ITYPE_LARMOR, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(objectInfo._ox, objectInfo._oy, TRUE, ITYPE_LARMOR, IMISC_NONE, TRUE, FALSE);
 		} else if (currlevel >= 6 && currlevel <= 9) {
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(objectInfo._ox, objectInfo._oy, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, TRUE, FALSE);
 		} else if (currlevel >= 10 && currlevel <= 12) {
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, FALSE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(objectInfo._ox, objectInfo._oy, FALSE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
 		} else if (currlevel >= 13 && currlevel <= 16) {
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, TRUE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(objectInfo._ox, objectInfo._oy, TRUE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
 		}
 	} break;
 	case OBJ_WARWEAP:
 	case OBJ_WEAPONRACK: {
-		SetRndSeed(object[oid]._oRndSeed);
+		SetRndSeed(objectInfo._oRndSeed);
 		int weaponType = ITYPE_MISC;
 
 		switch (random_(0, 4) + ITYPE_SWORD) {
@@ -95,28 +106,35 @@ static void CreateItemsFromObject(int oid)
 		}
 
 		if (leveltype > 1)
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, TRUE, weaponType, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(objectInfo._ox, objectInfo._oy, TRUE, weaponType, IMISC_NONE, TRUE, FALSE);
 		else
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, FALSE, weaponType, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(objectInfo._ox, objectInfo._oy, FALSE, weaponType, IMISC_NONE, TRUE, FALSE);
 	} break;
 	}
 }
 
-static void DropAllItems()
+/*
+ * @brief Force generates all items in the dungeon level.
+ */
+static void SpawnAllItems()
 {
+	// Spawn monster drops
 	MonsterItems = numitems;
 	for (int i = 0; i < nummonsters; i++) {
-		int mid = monstactive[i];
-		if (monster[mid].MType->mtype == MT_GOLEM)
+		int monsterId = monstactive[i];
+		auto &monsterInfo = monster[monsterId];
+
+		if (monsterInfo.MType->mtype == MT_GOLEM)
 			continue;
-		SetRndSeed(monster[mid]._mRndSeed);
-		SpawnItem(mid, monster[mid]._mx, monster[mid]._my, TRUE);
+		SetRndSeed(monsterInfo._mRndSeed);
+		SpawnItem(monsterId, monsterInfo._mx, monsterInfo._my, TRUE);
 	}
 
+	// Spawn object drops
 	ObjectItems = numitems;
 	for (int i = 0; i < nobjects; i++) {
-		int oid = objectactive[i];
-		CreateItemsFromObject(oid);
+		int objectId = objectactive[i];
+		SpawnObjectItem(objectId);
 	}
 }
 
@@ -127,18 +145,21 @@ bool ScannerItem::skipLevel(int level)
 	return level != *Config.target;
 }
 
+/*
+ * @brief Searches for the target item in the dungeon level.
+ */
 bool LocateItem()
 {
-	DropAllItems();
+	SpawnAllItems();
 
 	POI = { -1, -1 };
 
 	for (int i = 0; i < numitems; i++) {
-		int ii = itemactive[i];
-		ItemStruct &searchItem = item[ii];
+		int itemIndex = itemactive[i];
+		auto &currentItem = item[itemIndex];
 
-		if (Config.targetStr.compare(searchItem._iIName) == 0) {
-			POI = { searchItem._ix, searchItem._iy };
+		if (Config.targetStr == currentItem._iIName) {
+			POI = { currentItem._ix, currentItem._iy };
 			return true;
 		}
 	}
@@ -149,30 +170,46 @@ bool LocateItem()
 bool ScannerItem::levelMatches(std::optional<uint32_t> levelSeed)
 {
 	if (!LocateItem())
-		return false;
+		return false; // Target item not found
 
 	if (Config.verbose) {
+		// Monster information
 		std::cerr << "Monster Count: " << nummonsters << std::endl;
+
 		for (int i = 0; i < nummonsters; i++) {
-			std::cerr << "Monster " << i << ": " << monster[monstactive[i]].mName << " (" << monster[monstactive[i]]._mRndSeed << ")" << std::endl;
+			const auto &monsterInfo = monster[monstactive[i]];
+
+			std::cerr << "Monster " << i << ": " << monsterInfo.mName
+			          << " (Seed: " << monsterInfo._mRndSeed << ")" << std::endl;
 		}
-		std::cerr << std::endl;
-		std::cerr << "Object Count: " << nobjects << std::endl;
+
+		// Object information
+		std::cerr << "\nObject Count: " << nobjects << std::endl;
+
 		for (int i = 0; i < nobjects; i++) {
-			int oid = objectactive[i];
-			char objstr[50];
-			GetObjectStr(oid, objstr);
-			std::cerr << "Object " << i << ": " << objstr << " (" << object[oid]._oRndSeed << ")" << std::endl;
+			auto objectId = objectactive[i];
+			const auto &objectInfo = object[objectId];
+			char objectStr[50];
+
+			GetObjectStr(objectId, objectStr);
+			std::cerr << "Object " << i << ": " << objectStr
+			          << " (Seed: " << objectInfo._oRndSeed << ")" << std::endl;
 		}
-		std::cerr << std::endl;
-		std::cerr << "Item Count: " << numitems << std::endl;
+
+		// Item information
+		std::cerr << "\nItem Count: " << numitems << std::endl;
+
 		for (int i = 0; i < numitems; i++) {
-			std::string prefix = "";
-			if (i >= ObjectItems)
+			std::string prefix;
+
+			if (i >= ObjectItems) {
 				prefix = "Object ";
-			else if (i >= MonsterItems)
+			} else if (i >= MonsterItems) {
 				prefix = "Monster ";
-			std::cerr << prefix << "Item " << i << ": " << item[itemactive[i]]._iIName << " (" << item[itemactive[i]]._iSeed << ")" << std::endl;
+			}
+			const auto &itemInfo = item[itemactive[i]];
+			std::cerr << prefix << "Item " << i << ": " << itemInfo._iIName
+			          << " (Seed: " << itemInfo._iSeed << ")" << std::endl;
 		}
 	}
 
