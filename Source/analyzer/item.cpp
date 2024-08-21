@@ -77,11 +77,11 @@ static void SpawnObjectItem(int oid)
 		BOOL uniqueRnd = random_(0, 2);
 		if (currlevel <= 5) {
 			CreateTypeItem(objectInfo._ox, objectInfo._oy, TRUE, ITYPE_LARMOR, IMISC_NONE, TRUE, FALSE);
-		} else if (currlevel >= 6 && currlevel <= 9) {
+		} else if (currlevel <= 9) {
 			CreateTypeItem(objectInfo._ox, objectInfo._oy, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, TRUE, FALSE);
-		} else if (currlevel >= 10 && currlevel <= 12) {
+		} else if (currlevel <= 12) {
 			CreateTypeItem(objectInfo._ox, objectInfo._oy, FALSE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
-		} else if (currlevel >= 13 && currlevel <= 16) {
+		} else { // currlevel >= 13
 			CreateTypeItem(objectInfo._ox, objectInfo._oy, TRUE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
 		}
 	} break;
