@@ -81,7 +81,7 @@ static void SpawnObjectItem(int oid)
 			CreateTypeItem(objectInfo._ox, objectInfo._oy, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, TRUE, FALSE);
 		} else if (currlevel <= 12) {
 			CreateTypeItem(objectInfo._ox, objectInfo._oy, FALSE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
-		} else { // currlevel >= 13
+		} else if (currlevel <= 16) {
 			CreateTypeItem(objectInfo._ox, objectInfo._oy, TRUE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
 		}
 	} break;
