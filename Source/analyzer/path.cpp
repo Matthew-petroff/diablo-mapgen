@@ -81,9 +81,9 @@ bool IsVisible(Point start, Point end)
 	int horizontal = end.x - start.x + 10;
 	int vertical = end.y - start.y + 10;
 
-	if (horizontal < 0 || horizontal > MAXVIEWX)
+	if (horizontal < 0 || horizontal >= MAXVIEWX)
 		return false;
-	if (vertical < 0 || vertical > MAXVIEWY)
+	if (vertical < 0 || vertical >= MAXVIEWY)
 		return false;
 	return isVisible[vertical][horizontal];
 }
