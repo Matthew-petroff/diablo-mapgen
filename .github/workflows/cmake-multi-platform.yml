@@ -45,7 +45,7 @@ jobs:
             c_compiler: cl
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -70,14 +70,14 @@ jobs:
 
     - name: Archive Artifact (Windows)
       if: matrix.os == 'windows-latest'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: diablo-mapgen-artifact-${{ matrix.build_type }}
         path: ${{ steps.strings.outputs.build-output-dir }}\${{ matrix.build_type }}\diablo-mapgen.exe
 
     - name: Archive Artifact (Linux)
       if: matrix.os != 'windows-latest'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: diablo-mapgen-artifact-${{ matrix.c_compiler }}-${{ matrix.build_type }}
         path: ${{ steps.strings.outputs.build-output-dir }}/diablo-mapgen
