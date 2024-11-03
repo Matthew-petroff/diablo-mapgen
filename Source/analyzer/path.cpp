@@ -136,10 +136,10 @@ int GetTeleportTime(Point start, Point end)
 	}
 
 	if (IsVisible(start, end))
-		cDistance = 5;
+		cDistance = 7;
 
 	/** @todo Take teleport limits into consideration instead of just estimating 5 steps */
-	return cDistance * ticksToTeleport / 5;
+	return cDistance * ticksToTeleport / 7;
 }
 
 int GetShortestTeleportTime(Point startA, Point startB, Point end)
