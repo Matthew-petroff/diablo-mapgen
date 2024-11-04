@@ -15,6 +15,7 @@
 #include "../objects.h"
 #include "../path.h"
 #include "../quests.h"
+#include "../monster.h"
 
 namespace {
 
@@ -45,6 +46,28 @@ bool isVisible[MAXVIEWY][MAXVIEWX] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //	+y
 };
 
+bool isVisiblePhasing[MAXVIEWY][MAXVIEWX] = {
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //	-y
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // -x	origin(10,10)	+x
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //	+y
+};
+
 Point StairsDownPrevious;
 
 BOOL PosOkPlayer(int pnum, int x, int y)
@@ -67,9 +90,19 @@ BOOL PosOkPlayer(int pnum, int x, int y)
 	return TRUE;
 }
 
+BOOL PosOkGhost(int pnum, int x, int y)
+{
+	return TRUE;
+}
+
 int PathLength(Point start, Point end)
 {
 	return FindPath(PosOkPlayer, 0, start.x, start.y, end.x, end.y, Path);
+}
+
+int IndicatePath(Point start, Point end)
+{
+	return FindPath(PosOkGhost, 0, start.x, start.y, end.x, end.y, Path);
 }
 
 bool IsVisible(Point start, Point end)
@@ -136,22 +169,41 @@ int GetTeleportTime(Point start, Point end)
 	}
 
 	if (IsVisible(start, end))
-		cDistance = 5;
+		cDistance = 7;
 
 	/** @todo Take teleport limits into consideration instead of just estimating 5 steps */
-	return cDistance * ticksToTeleport / 5;
+	return cDistance * ticksToTeleport / 7;
 }
 
 int GetShortestTeleportTime(Point startA, Point startB, Point end)
 {
 	int teleportTime = GetTeleportTime(startA, end);
 	int teleportTimePrevious = GetTeleportTime(startB, end);
-	if (teleportTime == -1)
-		teleportTime = teleportTimePrevious;
-	if (teleportTime == -1)
+	if (teleportTime == -1 && teleportTimePrevious == -1)
 		return -1;
 
-	return std::min(teleportTime, teleportTimePrevious);
+	if (teleportTime > -1 && teleportTime <= teleportTimePrevious) {
+		IndicatePath(startA, end);
+		return teleportTime;
+	}
+
+	std::cout << "PATH: Using load teleporting" << std::endl;
+		IndicatePath(startB, end);
+		Spawn = StairsDownPrevious;
+	return teleportTimePrevious;
+}
+
+int GetShortestPhasingTime(Point start, Point end)
+{
+	constexpr int ticksToTeleport = 12;
+
+	int cDistance = CalcStairsChebyshevDistance(start, end);
+	if (cDistance == -1) {
+		return -1;
+	}
+
+	/** @todo Take phasing limits into consideration instead of just estimating based on distance */
+	return cDistance * (ticksToTeleport + 3) / 5 + 20;
 }
 
 void setDoorSolidState(BOOLEAN doorState)
@@ -180,35 +232,64 @@ void setDoorSolidState(BOOLEAN doorState)
 	}
 }
 
+static void HighLightGear()
+{
+	Config.targetStr = "Book of Fire Wall";
+	if (LocateItems(0, false)) {
+		if (Config.verbose)
+			std::cout << "PATH: Located " << Config.targetStr << " (yellow)" << std::endl;
+	}
+	Config.targetStr = "Scroll of Identify";
+	if (LocateItems(2, false, false)) {
+		if (Config.verbose)
+			std::cout << "PATH: Located " << Config.targetStr << " (green)" << std::endl;
+	}
+	Config.targetStr = "Book of Mana Shield";
+	if (LocateItems(1, false, false)) {
+		if (Config.verbose)
+			std::cout << "PATH: Located " << Config.targetStr << " (cyan)" << std::endl;
+	}
+	Config.targetStr = "Scroll of Mana Shield";
+	if (LocateItems(1, false, false)) {
+		if (Config.verbose)
+			std::cout << "PATH: Located " << Config.targetStr << " (cyan)" << std::endl;
+	}
+	Config.targetStr = "Book of Stone Curse";
+	if (LocateItems(3, false, false)) {
+		if (Config.verbose)
+			std::cout << "PATH: Located " << Config.targetStr << " (gray)" << std::endl;
+	}
+	Config.targetStr = "Scroll of Stone Curse";
+	if (LocateItems(3, false, false)) {
+		if (Config.verbose)
+			std::cout << "PATH: Located " << Config.targetStr << " (gray)" << std::endl;
+	}
+}
+
 bool IsGoodLevelSorcStrategy()
 {
 	int tickLenth = 0;
-	tickLenth += 20; // Load screens
+	//tickLenth += 20; // Load screens
 
-	if (currlevel < 9) {
+	if (currlevel < 3) {
 		int walkTicks = GetWalkTime(Spawn, StairsDown);
 		if (walkTicks == -1) {
 			if (Config.verbose)
-				std::cerr << "PATH: Aborted walking to stairs." << std::endl;
+				std::cout << "PATH: Aborted walking to stairs." << std::endl;
 			return false;
 		}
 		tickLenth += walkTicks;
-	} else if (currlevel == 9) {
-		if (Config.targetStr.compare("Naj's Puzzler") != 0) {
-			if (Config.verbose)
-				std::cerr << "PATH: Naj's Puzzler not target item. Aborted." << std::endl;
-			return false;
-		}
-
+	} else if (currlevel == 3) {
+		Config.targetStr = "Scroll of Phasing";
 		int pathToItem = -1;
 
-		if (LocateItem()) {
+		if (LocateItem(false)) {
 			int walkTicks = GetWalkTime(Spawn, POI);
 			if (walkTicks != -1) {
-				int teleportTime = GetTeleportTime(Spawn, StairsDown);
+				int teleportTime = GetShortestPhasingTime(POI, StairsDown);
 				if (teleportTime != -1) {
 					pathToItem += walkTicks;
-					pathToItem += 40; // Pick up target item
+					pathToItem += 23; // Pick up target item
 					pathToItem += teleportTime;
 				}
 			}
@@ -216,22 +297,94 @@ bool IsGoodLevelSorcStrategy()
 
 		if (pathToItem != -1) {
 			if (Config.verbose)
-				std::cerr << "PATH: Located target item." << std::endl;
+				std::cout << "PATH: Located " << Config.targetStr << std::endl;
 			tickLenth += pathToItem;
 		} else {
 			if (Config.verbose)
-				std::cerr << "PATH: Went to town to get obtain Book of Teleport." << std::endl;
-			tickLenth += 880; // Buying a book of teleport
-			int walkTicks = GetTeleportTime(Spawn, StairsDown);
+				std::cout << "PATH: Went to town to get obtain Scroll of Phasing." << std::endl;
+			tickLenth += 880; // Buying a Scroll of Phasing
+			int walkTicks = GetShortestPhasingTime(Spawn, StairsDown);
 			if (walkTicks == -1) {
 				if (Config.verbose)
-					std::cerr << "PATH: Stairs not found." << std::endl;
+					std::cout << "PATH: Stairs not found." << std::endl;
 				return false;
 			}
 			tickLenth += walkTicks;
 		}
+	} else if (currlevel == 8) {
+		if (quests[Q_ZHAR]._qactive != QUEST_NOTAVAIL) {
+			if (Config.verbose)
+				std::cout << "PATH: Shopping at Zhar." << std::endl;
+			Point target = { monster[4]._mx, monster[4]._my };
+			int teleportTime = GetShortestPhasingTime(Spawn, target);
+			if (teleportTime == -1) {
+				if (Config.verbose)
+					std::cout << "PATH: Zhar not found." << std::endl;
+				return false;
+			}
+			tickLenth += teleportTime;
+			tickLenth += 60; // Shop Zhar
+			teleportTime = GetShortestPhasingTime(target, StairsDown);
+			if (teleportTime == -1) {
+				if (Config.verbose)
+					std::cout << "PATH: Stairs not found." << std::endl;
+				return false;
+			}
+			tickLenth += teleportTime;
+			IndicatePath(Spawn, target);
+		} else {
+			int teleportTime = GetShortestPhasingTime(Spawn, StairsDown);
+			if (teleportTime == -1) {
+				if (Config.verbose)
+					std::cout << "PATH: Stairs not found." << std::endl;
+				return false;
+			}
+			tickLenth += teleportTime;
+			IndicatePath(Spawn, StairsDown);
+		}
+	} else if (currlevel < 9) {
+		int teleportTime = GetShortestPhasingTime(Spawn, StairsDown);
+		if (teleportTime == -1) {
+			if (Config.verbose)
+				std::cout << "PATH: Stairs not found." << std::endl;
+			return false;
+		}
+		tickLenth += teleportTime;
+		IndicatePath(Spawn, StairsDown);
+	} else if (currlevel == 9) {
+		Config.targetStr = "Naj's Puzzler";
+		int pathToItem = -1;
 
-		tickLenth += 1100; // Fight monsters to get target item, or level up to read the book
+		if (LocateItem(false)) {
+			int walkTicks = GetShortestPhasingTime(Spawn, POI);
+			if (walkTicks != -1) {
+				int teleportTime = GetTeleportTime(POI, StairsDown);
+				if (teleportTime != -1) {
+					pathToItem += walkTicks;
+					pathToItem += 23; // Pick up target item
+					pathToItem += teleportTime;
+				}
+			}
+		}
+
+		if (pathToItem != -1) {
+			if (Config.verbose)
+				std::cout << "PATH: Located " << Config.targetStr << std::endl;
+			tickLenth += pathToItem;
+			IndicatePath(Spawn, POI);
+		} else {
+			if (Config.verbose)
+				std::cout << "PATH: Went to town to get obtain Book of Teleport." << std::endl;
+			tickLenth += 880; // Buying a book of teleport
+			int walkTicks = GetTeleportTime(Spawn, StairsDown);
+			if (walkTicks == -1) {
+				if (Config.verbose)
+					std::cout << "PATH: Stairs not found." << std::endl;
+				return false;
+			}
+			tickLenth += walkTicks;
+			IndicatePath(Spawn, StairsDown);
+		}
 	} else if (currlevel == 15) {
 		Point target = { -1, -1 };
 
@@ -247,31 +400,31 @@ bool IsGoodLevelSorcStrategy()
 		// Locate Lazarus warp
 		if (POI != Point { -1, -1 }) {
 			if (Config.verbose)
-				std::cerr << "PATH: Located Lazarus warp." << std::endl;
+				std::cout << "PATH: Located Lazarus warp." << std::endl;
 			target = POI;
 		}
 
 		int teleportTime = GetShortestTeleportTime(Spawn, StairsDownPrevious, target);
 		if (teleportTime == -1) {
 			if (Config.verbose)
-				std::cerr << "PATH: Stairs not found." << std::endl;
+				std::cout << "PATH: Stairs not found." << std::endl;
 			return false;
 		}
 		tickLenth += teleportTime;
 
 		if (POI == Point { -1, -1 }) {
 			if (Config.verbose)
-				std::cerr << "PATH: Advanced Lazarus quest at Cain." << std::endl;
+				std::cout << "PATH: Advanced Lazarus quest at Cain." << std::endl;
 			tickLenth += 20;  // Pick up staff
 			tickLenth += 580; // Show staff to Cain
 		}
 
-		tickLenth += 460; // Defeat Lazarus
+		tickLenth += 260; // Defeat Lazarus
 
 		int teleportTime2 = GetTeleportTime(target, StairsDown);
 		if (teleportTime2 == -1) {
 			if (Config.verbose)
-				std::cerr << "PATH: Stairs not found." << std::endl;
+				std::cout << "PATH: Stairs not found." << std::endl;
 			return false;
 		}
 		tickLenth += teleportTime2;
@@ -279,7 +432,7 @@ bool IsGoodLevelSorcStrategy()
 		int teleportTime = GetShortestTeleportTime(Spawn, StairsDownPrevious, StairsDown);
 		if (teleportTime == -1) {
 			if (Config.verbose)
-				std::cerr << "PATH: Stairs not found." << std::endl;
+				std::cout << "PATH: Stairs not found." << std::endl;
 			return false;
 		}
 		tickLenth += teleportTime;
@@ -292,13 +445,15 @@ bool IsGoodLevelSorcStrategy()
 	TotalTickLenth += tickLenth;
 
 	if (Config.verbose)
-		std::cerr << "PATH: Completed dungeon level " << (int)currlevel << " @ " << formatTime() << std::endl;
+		std::cout << "PATH: Completed dungeon level " << (int)currlevel << " @ " << formatTime() << std::endl;
 
 	if (TotalTickLenth > *Config.target * 20) {
 		if (Config.verbose)
-			std::cerr << "PATH: Exceeded path time. Aborted." << std::endl;
+			std::cout << "PATH: Exceeded path time. Aborted." << std::endl;
 		return false;
 	}
+
+	HighLightGear();
 
 	return true;
 }
@@ -321,18 +476,13 @@ bool Ended;
  */
 bool ScannerPath::skipSeed()
 {
-	if (quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
-		if (Config.verbose)
-			std::cerr << "Sign Quest present. Skipping Game Seed: " << sgGameInitInfo.dwSeed << std::endl;
-		return true;
-	}
-
 	TotalTickLenth = 0;
-	TotalTickLenth += 435;  // Walk to Adria
-	TotalTickLenth += 1400; // Dupe Gold
-	TotalTickLenth += 250;  // Buy 2 books
-	TotalTickLenth += 200;  // Buy Potions of Full Mana
-	TotalTickLenth += 540;  // Walk to Cathedral
+	TotalTickLenth += 545;  // Walk to Cathedral
+	//TotalTickLenth += 435;  // Walk to Adria
+	//TotalTickLenth += 1400; // Dupe Gold
+	//TotalTickLenth += 250;  // Buy 2 books
+	//TotalTickLenth += 200;  // Buy Potions of Full Mana
+	//TotalTickLenth += 540;  // Walk to Cathedral
 	Ended = false;
 
 	return false;

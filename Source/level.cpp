@@ -137,6 +137,24 @@ std::string cyan(std::string text)
 #endif
 }
 
+static bool IsPoi(Point position)
+{
+	for (int i = 0; i < poiIndex; i++) {
+		if (POIs[i] == position)
+		return true;
+	}
+	return false;
+}
+
+static int PoiType(Point position)
+{
+	for (int i = 0; i < poiIndex; i++) {
+		if (POIs[i] == position)
+			return POITypes[i];
+	}
+	return -1;
+}
+
 void printAsciiLevel()
 {
 	bool steps[MAXDUNX][MAXDUNY];
@@ -173,7 +191,16 @@ void printAsciiLevel()
 				std::cout << red("m");
 			else if (Point { bobx, boby } == POI && !nSolidTable[dPiece[bobx][boby]])
 				std::cout << red("!");
-			else if (dObject[bobx][boby])
+			else if (IsPoi(Point { bobx, boby })) {
+				if (PoiType(Point { bobx, boby }) == 0)
+					std::cout << yellow("!");
+				else if (PoiType(Point { bobx, boby }) == 1)
+					std::cout << cyan("!");
+				else if (PoiType(Point { bobx, boby }) == 2)
+					std::cout << green("!");
+				else if (PoiType(Point { bobx, boby }) == 3)
+					std::cout << gray("!");
+			} else if (dObject[bobx][boby])
 				std::cout << yellow("*");
 			else if (steps[bobx][boby])
 				std::cout << cyan("=");

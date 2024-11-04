@@ -9,6 +9,7 @@ num_processes=$((num_threads - 1))
 target=""
 targetStr=""
 mp=false
+seeds=""
 
 # Function to display usage information
 usage() {
@@ -22,6 +23,11 @@ while [[ $# -gt 0 ]]; do
     case $key in
         --scanner)
             scanner="$2"
+            shift
+            shift
+            ;;
+        --seeds)
+            seeds="$2"
             shift
             shift
             ;;
@@ -73,6 +79,11 @@ batch_size=$((total_count / num_processes + 1))
 
 # Define the command to run
 command="./diablo-mapgen --scanner $scanner"
+
+# Add seeds argument if provided
+if [ ! -z "$seeds" ]; then
+    command+=" --seeds $seeds"
+fi
 
 # Add target argument if provided
 if [ ! -z "$target" ]; then

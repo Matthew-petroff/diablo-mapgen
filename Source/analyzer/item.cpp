@@ -19,6 +19,8 @@ static void SpawnObjectItem(int oid)
 {
 	auto &objectInfo = object[oid];
 
+	if (objectInfo._oSelFlag == 0) return;
+
 	switch (objectInfo._otype) {
 	case OBJ_CHEST1:
 	case OBJ_CHEST2:
@@ -116,18 +118,22 @@ static void SpawnObjectItem(int oid)
 /*
  * @brief Force generates all items in the dungeon level.
  */
-static void SpawnAllItems()
+static void SpawnAllItems(bool searchMonsters)
 {
+	if (ItemsSpawned) return;
+
 	// Spawn monster drops
 	MonsterItems = numitems;
-	for (int i = 0; i < nummonsters; i++) {
-		int monsterId = monstactive[i];
-		auto &monsterInfo = monster[monsterId];
+	if (searchMonsters) {
+		for (int i = 0; i < nummonsters; i++) {
+			int monsterId = monstactive[i];
+			auto &monsterInfo = monster[monsterId];
 
-		if (monsterInfo.MType->mtype == MT_GOLEM)
-			continue;
-		SetRndSeed(monsterInfo._mRndSeed);
-		SpawnItem(monsterId, monsterInfo._mx, monsterInfo._my, TRUE);
+			if (monsterInfo.MType->mtype == MT_GOLEM)
+				continue;
+			SetRndSeed(monsterInfo._mRndSeed);
+			SpawnItem(monsterId, monsterInfo._mx, monsterInfo._my, TRUE);
+		}
 	}
 
 	// Spawn object drops
@@ -136,6 +142,8 @@ static void SpawnAllItems()
 		int objectId = objectactive[i];
 		SpawnObjectItem(objectId);
 	}
+
+	ItemsSpawned = true;
 }
 
 bool ScannerItem::skipLevel(int level)
@@ -146,11 +154,41 @@ bool ScannerItem::skipLevel(int level)
 }
 
 /*
+ * @brief Searches for the target items in the dungeon level.
+ */
+bool LocateItems(int type, bool searchMonsters, bool clearItems)
+{
+	SpawnAllItems(searchMonsters);
+
+	if (clearItems) {
+		memset(POIs, -1, sizeof(POIs));
+		memset(POITypes, -1, sizeof(POITypes));
+		poiIndex = 0;
+	}
+
+	bool found = false;
+
+	for (int i = 0; i < numitems; i++) {
+		int itemIndex = itemactive[i];
+		auto &currentItem = item[itemIndex];
+
+		if (Config.targetStr == currentItem._iIName) {
+			POITypes[poiIndex] = type;
+			POIs[poiIndex++] = { currentItem._ix, currentItem._iy };
+			found = true;
+		}
+	}
+
+	return found;
+}
+
+
+/*
  * @brief Searches for the target item in the dungeon level.
  */
-bool LocateItem()
+bool LocateItem(bool searchMonsters)
 {
-	SpawnAllItems();
+	SpawnAllItems(false);
 
 	POI = { -1, -1 };
 

@@ -37,6 +37,11 @@ int ObjectItems;
 Point Spawn = { -1, -1 };
 Point StairsDown = { -1, -1 };
 Point POI = { -1, -1 };
+Point POIs[100] = { { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 } };
+int POITypes[100] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+int poiIndex = 0;
+
+bool ItemsSpawned;
 
 char Path[MAX_PATH_LENGTH];
 
@@ -159,6 +164,7 @@ void CreateDungeonContent()
 	InitObjects();
 
 	InitItems();
+	ItemsSpawned = false;
 	CreateThemeRooms();
 }
 
@@ -261,7 +267,7 @@ void printProgress(uint32_t seedIndex, uint32_t seed)
 
 	uint64_t pct = 100 * (uint64_t)seedIndex / Config.seedCount;
 	int speed = (seedIndex - ProgressseedIndex) / 10;
-	int seconds = (Config.seedCount - seedIndex) / speed;
+	int seconds = (Config.seedCount - seedIndex) / std::max(speed, 1);
 	ProgressseedIndex = seedIndex;
 
 	int days = seconds / (24 * 3600);

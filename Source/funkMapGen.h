@@ -43,6 +43,10 @@ extern int ObjectItems;
 extern Point Spawn;
 extern Point StairsDown;
 extern Point POI;
+extern Point POIs[100];
+extern int POITypes[100];
+extern int poiIndex;
+extern bool ItemsSpawned;
 
 extern char Path[MAX_PATH_LENGTH];
 
