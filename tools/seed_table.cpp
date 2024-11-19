@@ -168,34 +168,41 @@ struct GameState {
 	uint32_t startingSeed;
 
 	std::array<int32_t, 17> seedTable {};
+	std::array<int32_t, 17> stateTable {};
 
 	GameState() = delete;
 
 	GameState(uint32_t state)
 	    : startingSeed(state)
 	{
-		for (auto &dungeonSeed : seedTable) {
-			state       = advanceRng(state);
-			dungeonSeed = std::abs(static_cast<int32_t>(state));
+		for (unsigned i = 0; i < seedTable.size(); ++i) {
+			state = advanceRng(state);
+			setLevelState(i, state);
 		}
 	}
 
-	GameState(uint8_t level, uint32_t seed, bool useNegatedState = false)
+	GameState(uint8_t level, uint32_t seed)
 	{
-		seedTable[level] = seed;
+		setLevelState(level, seed);
 
-		uint32_t state = useNegatedState ? -static_cast<int32_t>(seed) : seed;
+		uint32_t state = seed;
 		for (int i = level - 1; i >= 0; --i) {
-			state        = backtrackRng(state);
-			seedTable[i] = std::abs(static_cast<int32_t>(state));
+			state = backtrackRng(state);
+			setLevelState(i, state);
 		}
 		startingSeed = backtrackRng(state);
 
-		state = useNegatedState ? -static_cast<int32_t>(seed) : seed;
+		state = seed;
 		for (int i = level + 1; i < seedTable.size(); ++i) {
-			state        = advanceRng(state);
-			seedTable[i] = std::abs(static_cast<int32_t>(state));
+			state = advanceRng(state);
+			setLevelState(i, state);
 		}
+	}
+
+	void setLevelState(size_t level, uint32_t state)
+	{
+		stateTable[level] = static_cast<int32_t>(state);
+		seedTable[level]  = std::abs(stateTable[level]);
 	}
 };
 
@@ -214,7 +221,7 @@ static void renderSeedTable(const GameState &state)
 	Quests activeQuests = determineActiveQuests(state.seedTable[15]);
 
 	for (auto i = 0; i < state.seedTable.size(); ++i) {
-		std::cout << std::setw(2) << i << ":" << std::setw(11) << state.seedTable[i];
+		std::cout << std::setw(2) << i << ":" << std::setw(11) << state.seedTable[i] << " [" << std::setw(11) << state.stateTable[i] << "]";
 		if (i == 2) {
 			if (activeQuests.butcher && activeQuests.pwater) {
 				std::cout << " (with The Butcher and Poison Water Supply [Q_BUTCHER && Q_PWATER])";
@@ -290,7 +297,7 @@ int main(int argc, char *argv[])
 	if (level) {
 		if (0 < *seed && *seed <= std::numeric_limits<int32_t>::max()) {
 			std::cout << "\nDungeon seed could have been naturally generated from a negated state, alternative table follows:\n";
-			state = GameState(*level, *seed, true);
+			state = GameState(*level, -static_cast<int32_t>(*seed));
 			renderSeedTable(state);
 		} else if (*seed == 0 || *seed == static_cast<uint32_t>(std::numeric_limits<int32_t>::min())) {
 			std::cout << "Only one state could lead to that dungeon seed.\n";
